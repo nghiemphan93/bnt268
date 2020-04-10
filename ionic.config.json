@@ -1,0 +1,7 @@
+{
+  "name": "bnt268",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
