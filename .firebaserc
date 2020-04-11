@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "bnt268-f7f50": {
+      "hosting": {
+        "app": [
+          "bnt268-f7f50"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "bnt268-f7f50"
+  }
+}
