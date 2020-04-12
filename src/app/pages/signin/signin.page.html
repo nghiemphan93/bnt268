@@ -4,11 +4,75 @@
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>
-            Sign In
+            Đăng nhập
         </ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-margin-top">
+    <ion-grid fixed>
+        <ion-row>
+            <ion-col
+                    sizeXl="6"
+                    offsetXl="3"
+                    sizeLg="6"
+                    offsetLg="3"
+                    sizeMd="8"
+                    offsetMd="2"
+            >
+                <form
+                        class="ion-margin-top"
+                        [formGroup]="validationForm"
+                        (keydown.enter)="validationForm.valid ? signInHandler(submitButton) : null"
+                >
+                    <ion-item-divider>
+                        <ion-label>Sign In</ion-label>
+                    </ion-item-divider>
 
+                    <!--    Email    -->
+                    <ion-item-group>
+                        <ion-item>
+                            <ion-label>Email</ion-label>
+                            <ion-input
+                                    type="email"
+                                    placeholder="example@host.com"
+                                    formControlName="email"
+                            ></ion-input>
+                        </ion-item>
+                    </ion-item-group>
+
+                    <!--    Password    -->
+                    <ion-item-group>
+                        <ion-item>
+                            <ion-label>Password</ion-label>
+                            <ion-input
+                                    type="password"
+                                    placeholder="passwordsomething"
+                                    formControlName="password"
+                            ></ion-input>
+                        </ion-item>
+                    </ion-item-group>
+
+                    <!--  Submit Button  -->
+                    <ion-button
+                            [disabled]="!validationForm.valid"
+                            class="ion-margin-top"
+                            (click)="signInHandler(submitButton)"
+                            type="submit"
+                            expand="block"
+                            #submitButton
+                    >
+                        Sign In
+                    </ion-button>
+
+                    <ion-item
+                            *ngIf="error"
+                            class="ion-margin-top"
+                    >
+                        <ion-text color="danger">{{error}}</ion-text>
+                    </ion-item>
+                </form>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>

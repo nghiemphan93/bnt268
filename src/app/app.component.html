@@ -1,5 +1,5 @@
 <ion-app>
-    <ion-split-pane contentId="main-content" when="false">
+    <ion-split-pane contentId="main-content" when="true">
         <ion-menu contentId="main-content" type="overlay">
             <ion-header>
                 <ion-toolbar>
@@ -7,30 +7,16 @@
                 </ion-toolbar>
             </ion-header>
 
-            <!--            <ion-content>-->
-            <!--                <ion-list id="inbox-list">-->
-            <!--                    <ion-menu-toggle auto-hide="true" *ngFor="let p of appPages; let i = index">-->
-            <!--                        <ion-item-->
-            <!--                                (click)="selectedIndex = i"-->
-            <!--                                routerDirection="root"-->
-            <!--                                [routerLink]="[p.url]" lines="none"-->
-            <!--                                detail="false" [class.selected]="selectedIndex == i"-->
-            <!--                        >-->
-            <!--                            <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>-->
-            <!--                            <ion-label>{{ p.title }}</ion-label>-->
-            <!--                        </ion-item>-->
-            <!--                    </ion-menu-toggle>-->
-            <!--                </ion-list>-->
-            <!--            </ion-content>-->
-
             <ion-content>
                 <ion-list id="inbox-list">
                     <ion-menu-toggle auto-hide="true">
-                        <ion-list>
+                        <ion-list
+                                *ngIf="user$ | async"
+                        >
                             <ion-item
                                     (click)="setSelected(0)"
                                     routerDirection="root"
-                                    [routerLink]="'/'"
+                                    [routerLink]="['/users']"
                                     lines="none"
                                     detail="false"
                                     [class.selected]="selectedIndex == 0"
@@ -42,7 +28,7 @@
                             <ion-item
                                     (click)="setSelected(1)"
                                     routerDirection="root"
-                                    [routerLink]="'/'"
+                                    [routerLink]="['/users/', (user$ | async).uid]"
                                     lines="none"
                                     detail="false"
                                     [class.selected]="selectedIndex == 1"
@@ -56,6 +42,7 @@
 
                         <ion-list>
                             <ion-item
+                                    *ngIf="!(user$ | async)"
                                     (click)="setSelected(2)"
                                     routerDirection="root"
                                     [routerLink]="['/signin']"
@@ -68,7 +55,8 @@
                             </ion-item>
 
                             <ion-item
-                                    (click)="setSelected(3)"
+                                    *ngIf="user$ | async"
+                                    (click)="signOutHandler()"
                                     routerDirection="root"
                                     [routerLink]="'/'"
                                     lines="none"
