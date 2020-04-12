@@ -7,18 +7,79 @@
                 </ion-toolbar>
             </ion-header>
 
+            <!--            <ion-content>-->
+            <!--                <ion-list id="inbox-list">-->
+            <!--                    <ion-menu-toggle auto-hide="true" *ngFor="let p of appPages; let i = index">-->
+            <!--                        <ion-item-->
+            <!--                                (click)="selectedIndex = i"-->
+            <!--                                routerDirection="root"-->
+            <!--                                [routerLink]="[p.url]" lines="none"-->
+            <!--                                detail="false" [class.selected]="selectedIndex == i"-->
+            <!--                        >-->
+            <!--                            <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>-->
+            <!--                            <ion-label>{{ p.title }}</ion-label>-->
+            <!--                        </ion-item>-->
+            <!--                    </ion-menu-toggle>-->
+            <!--                </ion-list>-->
+            <!--            </ion-content>-->
+
             <ion-content>
                 <ion-list id="inbox-list">
-                    <ion-menu-toggle auto-hide="true" *ngFor="let p of appPages; let i = index">
-                        <ion-item
-                                (click)="selectedIndex = i"
-                                routerDirection="root"
-                                [routerLink]="[p.url]" lines="none"
-                                detail="false" [class.selected]="selectedIndex == i"
-                        >
-                            <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
-                            <ion-label>{{ p.title }}</ion-label>
-                        </ion-item>
+                    <ion-menu-toggle auto-hide="true">
+                        <ion-list>
+                            <ion-item
+                                    (click)="setSelected(0)"
+                                    routerDirection="root"
+                                    [routerLink]="'/'"
+                                    lines="none"
+                                    detail="false"
+                                    [class.selected]="selectedIndex == 0"
+                            >
+                                <ion-icon slot="start" name="people-outline"></ion-icon>
+                                <ion-label>Danh sách thợ</ion-label>
+                            </ion-item>
+
+                            <ion-item
+                                    (click)="setSelected(1)"
+                                    routerDirection="root"
+                                    [routerLink]="'/'"
+                                    lines="none"
+                                    detail="false"
+                                    [class.selected]="selectedIndex == 1"
+                            >
+                                <ion-icon slot="start" name="person-outline"></ion-icon>
+                                <ion-label>Thông tin người dùng</ion-label>
+                            </ion-item>
+                        </ion-list>
+
+                        <ion-item-divider></ion-item-divider>
+
+                        <ion-list>
+                            <ion-item
+                                    (click)="setSelected(2)"
+                                    routerDirection="root"
+                                    [routerLink]="['/signin']"
+                                    lines="none"
+                                    detail="false"
+                                    [class.selected]="selectedIndex == 2"
+                            >
+                                <ion-icon slot="start" name="log-in-outline"></ion-icon>
+                                <ion-label>Đăng Nhập</ion-label>
+                            </ion-item>
+
+                            <ion-item
+                                    (click)="setSelected(3)"
+                                    routerDirection="root"
+                                    [routerLink]="'/'"
+                                    lines="none"
+                                    detail="false"
+                                    [class.selected]="selectedIndex == 3"
+                            >
+                                <ion-icon slot="start" name="log-out-outline"></ion-icon>
+                                <ion-label>Đăng xuất</ion-label>
+                            </ion-item>
+                        </ion-list>
+
                     </ion-menu-toggle>
                 </ion-list>
             </ion-content>
