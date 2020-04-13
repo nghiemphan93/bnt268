@@ -258,11 +258,18 @@ export const makeClaimToUser = async (user: any | UserRecord) => {
 };
 
 export const createUserHelper = async (user: any) => {
-    const createdUser = await admin.auth().createUser({
-        displayName: user.displayName,
-        email: user.email,
-        password: user.password,
-    });
+    let createdUser: UserRecord | any = {};
+    try {
+        createdUser = await admin.auth().createUser({
+            displayName: user.displayName,
+            email: user.email,
+            password: user.password,
+        });
+    } catch (e) {
+        console.log(e);
+        throw new HttpsError('invalid-argument', e.message);
+    }
+
     user.uid = createdUser.uid;
     await makeClaimToUser(user);
 

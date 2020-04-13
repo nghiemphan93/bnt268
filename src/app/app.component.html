@@ -16,22 +16,34 @@
                             <ion-item
                                     (click)="setSelected(0)"
                                     routerDirection="root"
-                                    [routerLink]="['/users']"
+                                    [routerLink]="['/products']"
                                     lines="none"
                                     detail="false"
                                     [class.selected]="selectedIndex == 0"
+                            >
+                                <ion-icon slot="start" name="pricetags-outline"></ion-icon>
+                                <ion-label>Các sản phẩm</ion-label>
+                            </ion-item>
+
+                            <ion-item
+                                    (click)="setSelected(1)"
+                                    routerDirection="root"
+                                    [routerLink]="['/users']"
+                                    lines="none"
+                                    detail="false"
+                                    [class.selected]="selectedIndex == 1"
                             >
                                 <ion-icon slot="start" name="people-outline"></ion-icon>
                                 <ion-label>Danh sách thợ</ion-label>
                             </ion-item>
 
                             <ion-item
-                                    (click)="setSelected(1)"
+                                    (click)="setSelected(2)"
                                     routerDirection="root"
                                     [routerLink]="['/users/', (user$ | async).uid]"
                                     lines="none"
                                     detail="false"
-                                    [class.selected]="selectedIndex == 1"
+                                    [class.selected]="selectedIndex == 2"
                             >
                                 <ion-icon slot="start" name="person-outline"></ion-icon>
                                 <ion-label>Thông tin người dùng</ion-label>
@@ -43,12 +55,12 @@
                         <ion-list>
                             <ion-item
                                     *ngIf="!(user$ | async)"
-                                    (click)="setSelected(2)"
+                                    (click)="setSelected(3)"
                                     routerDirection="root"
                                     [routerLink]="['/signin']"
                                     lines="none"
                                     detail="false"
-                                    [class.selected]="selectedIndex == 2"
+                                    [class.selected]="selectedIndex == 3"
                             >
                                 <ion-icon slot="start" name="log-in-outline"></ion-icon>
                                 <ion-label>Đăng Nhập</ion-label>
@@ -61,7 +73,7 @@
                                     [routerLink]="'/'"
                                     lines="none"
                                     detail="false"
-                                    [class.selected]="selectedIndex == 3"
+                                    [class.selected]="selectedIndex == 4"
                             >
                                 <ion-icon slot="start" name="log-out-outline"></ion-icon>
                                 <ion-label>Đăng xuất</ion-label>

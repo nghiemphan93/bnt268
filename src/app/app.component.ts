@@ -18,6 +18,10 @@ export class AppComponent implements OnInit {
 
     appPages = [
         {
+            title: 'Các sản phẩm',
+            url: '/products'
+        },
+        {
             title: 'Danh sách Thợ',
             url: '/users',
         },
@@ -64,7 +68,7 @@ export class AppComponent implements OnInit {
     }
 
     async signOutHandler() {
-        this.selectedIndex = 2;
+        this.selectedIndex = 3;
 
         try {
             await this.authService.signOut();

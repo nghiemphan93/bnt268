@@ -1,6 +1,6 @@
 export class Product {
     id: string;
     productName: string;
-    price: number;
-    createAt: Date;
+    productPrice: number;
+    createdAt: Date;
 }

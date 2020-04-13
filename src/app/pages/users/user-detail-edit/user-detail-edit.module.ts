@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { UserDetailEditPageRoutingModule } from './user-detail-edit-routing.module';
 
 import { UserDetailEditPage } from './user-detail-edit.page';
+import {UserCreatePageModule} from '../user-create/user-create.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    UserDetailEditPageRoutingModule
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        UserDetailEditPageRoutingModule,
+        UserCreatePageModule
+    ],
   declarations: [UserDetailEditPage]
 })
 export class UserDetailEditPageModule {}

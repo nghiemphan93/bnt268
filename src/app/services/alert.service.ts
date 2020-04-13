@@ -49,12 +49,12 @@ export class AlertService {
         try {
             if (toDeleteObject.hasOwnProperty('orderName')) {
                 const toDeleteOrder = toDeleteObject as Order;
-                // TODO DELETE ORDER
+                await this.orderService.deleteOrder(toDeleteOrder.user.uid, toDeleteOrder);
                 await this.toastService.presentToastSuccess(`Successfully deleted Order ${toDeleteOrder.orderName}`);
             }
             if (toDeleteObject.hasOwnProperty('productName')) {
                 const toDeleteProduct = toDeleteObject as Product;
-                // TODO DELETE PRODUCT
+                await this.productService.deleteProduct(toDeleteProduct);
                 await this.toastService.presentToastSuccess(`Successfully deleted Product ${toDeleteProduct.productName}`);
             }
             if ('email' in toDeleteObject) {

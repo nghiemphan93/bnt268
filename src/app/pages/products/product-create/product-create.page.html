@@ -1,9 +1,101 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>product-create</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title *ngIf="isCreated">Create Product</ion-title>
+        <ion-title *ngIf="isUpdated">Edit Product</ion-title>
+        <ion-title *ngIf="isDetailed">Product's Details</ion-title>
+    </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
+    <ion-grid fixed>
+        <ion-row>
+            <ion-col
+                    sizeXl="6"
+                    offsetXl="3"
+                    sizeLg="6"
+                    offsetLg="3"
+                    sizeMd="8"
+                    offsetMd="2"
+            >
+                <ion-button routerLink="/products">
+                    To Products
+                </ion-button>
+                <ion-button
+                        color="tertiary"
+                        *ngIf="isDetailed && product"
+                        [routerLink]="['/products', product.id, 'edit']"
+                >
+                    <ion-icon name="settings-outline" class="ion-margin-end"></ion-icon>
+                    Edit
+                </ion-button>
 
+                <!--        Reactive Form        -->
+                <form
+                    #form
+                    [formGroup]="validationForm"
+                    *ngIf="product"
+                    (keydown.enter)="!submitButton.disabled ? submitHandler(submitButton) : null"
+                >
+                    <ion-item-divider>
+                        <ion-label *ngIf="isDetailed">Please fill in information for the product</ion-label>
+                    </ion-item-divider>
+
+                    <!--    Product Name    -->
+                    <ion-item-group>
+                        <ion-item>
+                            <ion-label>Tên sản phẩm</ion-label>
+                            <ion-input
+                                    slot="end"
+                                    type="text"
+                                    placeholder="what.."
+                                    formControlName="productName"
+                                    *ngIf="!isDetailed"
+                            ></ion-input>
+
+                            <ion-label *ngIf="isDetailed">{{ product.productName }}</ion-label>
+                        </ion-item>
+                    </ion-item-group>
+
+                    <!--    Product Name    -->
+                    <ion-item-group>
+                        <ion-item>
+                            <ion-label>Giá (VND)</ion-label>
+                            <ion-input
+                                    slot="end"
+                                    type="number"
+                                    placeholder="what.."
+                                    formControlName="productPrice"
+                                    *ngIf="!isDetailed"
+                            ></ion-input>
+
+                            <ion-label *ngIf="isDetailed">{{ product.productPrice }}</ion-label>
+                        </ion-item>
+                    </ion-item-group>
+
+                    <!--  Submit Button  -->
+                    <ng-container>
+                        <ion-button
+                                [hidden]="isDetailed"
+                                [disabled]="!validationForm.valid"
+                                class="ion-margin-top"
+                                (click)="submitHandler(submitButton)"
+                                type="submit"
+                                expand="block"
+                                #submitButton
+                        >
+                            Submit
+                        </ion-button>
+                    </ng-container>
+                </form>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+    <ion-footer style="height: 10vh">
+    </ion-footer>
 </ion-content>
+
+

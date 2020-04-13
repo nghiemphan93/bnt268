@@ -18,17 +18,26 @@
         </ion-item-group>
 
         <ngx-datatable
-                #table
-                [rows]="users$ | async"
-                [rowHeight]="'auto'"
-                [headerHeight]="50"
-                [ngClass]="tableStyle"
-                [columnMode]="'force'"
-                [footerHeight]="50"
-                class="ion-text-wrap"
+            #table
+            [rows]="users$ | async"
+            [rowHeight]="'auto'"
+            [headerHeight]="50"
+            [ngClass]="tableStyle"
+            [columnMode]="'force'"
+            [footerHeight]="50"
+            class="ion-text-wrap"
         >
             <!--    User Email    -->
             <ngx-datatable-column name="Email" prop="email">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <ion-button
+                            size="small"
+                            color="dark"
+                            [routerLink]="['/users', row.uid]"
+                    >
+                        {{ row.email }}
+                    </ion-button>
+                </ng-template>
             </ngx-datatable-column>
 
             <!--    User Name    -->
@@ -42,18 +51,18 @@
                 </ng-template>
             </ngx-datatable-column>
 
-            <!--    Details Button   -->
+            <!--    Orders   -->
             <ngx-datatable-column
-                    name="Details"
+                    name="Các đơn hàng"
                     [sortable]="false"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <ion-button
                             size="small"
-                            color="secondary"
-                            [routerLink]="['/users', row.uid]"
+                            color="dark"
+                            [routerLink]="['/users', row.uid, 'orders']"
                     >
-                        Details
+                        Đơn hàng
                     </ion-button>
                 </ng-template>
             </ngx-datatable-column>

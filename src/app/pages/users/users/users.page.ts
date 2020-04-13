@@ -39,11 +39,11 @@ export class UsersPage implements OnInit, OnDestroy {
     ngOnInit() {
         this.preparePlatform();
         this.presentToastErrorIfTableNoData();
+        this.currentUser$ = this.authService.getCurrentUser$();
+        this.users$ = this.userService.getUsers();
     }
 
     ionViewDidEnter() {
-        this.currentUser$ = this.authService.getCurrentUser$();
-        this.users$ = this.userService.getUsers();
     }
 
     ngOnDestroy() {

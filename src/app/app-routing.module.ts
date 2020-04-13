@@ -19,7 +19,7 @@ const routes: Routes = [
         path: 'signin',
         loadChildren: () => import('./pages/signin/signin.module').then(m => m.SigninPageModule),
         canActivate: [AngularFireAuthGuard],
-        data: {authGuardPipe: redirectLoggedInToUsers}
+        data: {authGuardPipe: redirectLoggedInToProducts}
     },
     {
         path: 'not-found',
@@ -35,7 +35,6 @@ const routes: Routes = [
         path: 'products',
         loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsPageModule),
         canActivate: [AngularFireAuthGuard],
-        data: {authGuardPipe: devOrAdminOnly}
     },
     {
         path: '**',

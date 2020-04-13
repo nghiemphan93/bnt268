@@ -38,7 +38,7 @@ export class SigninPage implements OnInit {
             email: new FormControl('dev@bnt268.com', Validators.compose([
                 Validators.pattern(/^[a-zA-Z]{1,}[0-9]?([\.\_-]? [a-zA-Z0-9]+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/),
                 Validators.required])),
-            password: new FormControl('nghiemnghiem', Validators.required)
+            password: new FormControl('phanphan', Validators.required)
         });
     }
 
@@ -61,8 +61,8 @@ export class SigninPage implements OnInit {
         } catch (e) {
             console.log(e);
             this.error = e.message;
-            await this.toastService.presentToastError(e.message);
             await this.loadingService.dismissLoading();
+            await this.toastService.presentToastError(e.message);
             submitButton.disabled = false;
         }
     }

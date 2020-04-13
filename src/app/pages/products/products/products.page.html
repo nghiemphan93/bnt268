@@ -9,6 +9,99 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<!--Main Table Content for Desktop-->
+<ion-content *ngIf="isDesktop">
+    <section class="container">
+        <ion-item-group class="ion-margin">
+            <ion-button
+                    routerLink="/products/create"
+                    *ngIf="(isAuth$ | async) && !(user$ | async).customClaims.WORKER"
+            >
+                <ion-icon name="add-circle-outline" class="ion-margin-end"></ion-icon>
+                <p>Create New Product</p>
+            </ion-button>
+        </ion-item-group>
 
+        <ngx-datatable
+            #table
+            [rows]="productsDesktop$ | async"
+            [rowHeight]="'auto'"
+            [headerHeight]="50"
+            [ngClass]="tableStyle"
+            [columnMode]="'force'"
+            [footerHeight]="50"
+            class="ion-text-wrap"
+        >
+            <!--    Product Name    -->
+            <ngx-datatable-column name="Tên Sản Phẩm" prop="productName">
+            </ngx-datatable-column>
+
+            <!--    Product Price    -->
+            <ngx-datatable-column name="Giá" prop="productPrice">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    {{ row.productPrice | currency:'VND':'symbol':'4.0' }} VND
+                </ng-template>
+            </ngx-datatable-column>
+
+            <!--    Details Button   -->
+            <ngx-datatable-column
+                    name="Chi tiết"
+                    [sortable]="false"
+            >
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <ion-button
+                            size="small"
+                            color="dark"
+                            [routerLink]="['/products', row.id]"
+                    >
+                        Chi tiết
+                    </ion-button>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <!--    Edit Button   -->
+            <ngx-datatable-column
+                    name="Sửa"
+                    [sortable]="false"
+                    *ngIf="(isAuth$ | async) && !(user$ | async).customClaims.WORKER"
+            >
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <ion-button
+                            size="small"
+                            color="dark"
+                            [routerLink]="['/products', row.id, 'edit']"
+                    >
+                        Sửa
+                    </ion-button>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <!--    Delete Button    -->
+            <ngx-datatable-column
+                    name="Xóa"
+                    [sortable]="false"
+                    *ngIf="(isAuth$ | async) && !(user$ | async).customClaims.WORKER"
+            >
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <ion-button
+                            size="small"
+                            (click)="this.alertService.presentDeleteConfirm(row)"
+                            color="danger"
+                    >
+                        <ion-icon name="trash-outline"></ion-icon>
+                        Delete
+                    </ion-button>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+        <!--    </ng-container>-->
+
+        <ion-col
+                *ngIf="table.rowCount === 0"
+                size="6"
+                offset="5"
+        >
+            <ion-spinner class="spinner-loading"></ion-spinner>
+        </ion-col>
+    </section>
 </ion-content>

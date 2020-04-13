@@ -1,4 +1,6 @@
 import {Detail} from './detail';
+import {Order} from './order';
+import {User} from 'firebase';
 
 export class Transaction {
     id: string;
@@ -6,4 +8,6 @@ export class Transaction {
     details: Detail[];
     weight: number;
     createAt: Date;
+
+    order: Order;
 }
