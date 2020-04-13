@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {User} from 'firebase';
-import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFireFunctions} from '@angular/fire/functions';
 import UserCredential = firebase.auth.UserCredential;
 import {log} from 'util';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +12,7 @@ import {log} from 'util';
 export class AuthService {
     isAuthSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     isAuth$: Observable<boolean> = this.isAuthSubject.asObservable();
-    user: User | any;
+    user: any;
     userSubject = new BehaviorSubject<User>(null);
     user$: Observable<User> = this.userSubject.asObservable();
 
@@ -28,7 +28,7 @@ export class AuthService {
      * Emit new State to this.isAuth$ and this.user$
      */
     listenToAuthStateChange() {
-        this.auth.onAuthStateChanged(async user => {
+        this.auth.auth.onAuthStateChanged(async user => {
             if (user) {
                 this.user = user;
                 const idTokenResult = await this.user.getIdTokenResult();
@@ -43,25 +43,6 @@ export class AuthService {
                 console.log('user logged out... ');
             }
         });
-
-        // this.auth.onAuthStateChanged(async user => {
-        //     const currentUser = await this.auth.currentUser;
-        //     if (currentUser) {
-        //         this.user = currentUser;
-        //         console.log(this.makeDev(this.user.email));
-        //         const idTokenResult = await this.user.getIdTokenResult();
-        //         this.user.customClaims = idTokenResult.claims;
-        //         this.userSubject.next(this.user);
-        //         this.isAuthSubject.next(true);
-        //         console.log('user logged in: ' + this.user.email);
-        //         console.log(this.user);
-        //     } else {
-        //         this.user = null;
-        //         this.userSubject.next(this.user);
-        //         this.isAuthSubject.next(false);
-        //         console.log('user logged out... ');
-        //     }
-        // });
     }
 
     createUserByAdmin(user: any) {
@@ -103,15 +84,15 @@ export class AuthService {
     }
 
     signUp(email: string, password: string): Promise<UserCredential> {
-        return this.auth.createUserWithEmailAndPassword(email, password);
+        return this.auth.auth.createUserWithEmailAndPassword(email, password);
     }
 
     signIn(email: string, password: string): Promise<UserCredential> {
-        return this.auth.signInWithEmailAndPassword(email, password);
+        return this.auth.auth.signInWithEmailAndPassword(email, password);
     }
 
     signOut() {
-        return this.auth.signOut();
+        return this.auth.auth.signOut();
     }
 
     updatePasswordByAdmin(email: string, newPassword: string) {

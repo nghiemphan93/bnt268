@@ -3,12 +3,103 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>
-            Danh sách thợ
-        </ion-title>
+        <ion-title>Danh sách thợ</ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<!--  Main Table Content for Desktop  -->
+<ion-content *ngIf="isDesktop">
+    <section class="container">
+        <ion-item-group class="ion-margin">
+            <ion-button routerLink="/users/create">
+                <ion-icon name="add-circle-outline" class="ion-margin-end"></ion-icon>
+                <p>Create New User</p>
+            </ion-button>
+        </ion-item-group>
 
+        <ngx-datatable
+                #table
+                [rows]="users$ | async"
+                [rowHeight]="'auto'"
+                [headerHeight]="50"
+                [ngClass]="tableStyle"
+                [columnMode]="'force'"
+                [footerHeight]="50"
+                class="ion-text-wrap"
+        >
+            <!--    User Email    -->
+            <ngx-datatable-column name="Email" prop="email">
+            </ngx-datatable-column>
+
+            <!--    User Name    -->
+            <ngx-datatable-column name="User Name" prop="displayName">
+            </ngx-datatable-column>
+
+            <!--    Role   -->
+            <ngx-datatable-column name="Role" prop="customClaims">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <span>{{ this.claimService.claimBooleanToEnum(row) }}</span>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <!--    Details Button   -->
+            <ngx-datatable-column
+                    name="Details"
+                    [sortable]="false"
+            >
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <ion-button
+                            size="small"
+                            color="secondary"
+                            [routerLink]="['/users', row.uid]"
+                    >
+                        Details
+                    </ion-button>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <!--    Edit Button   -->
+            <ngx-datatable-column
+                    name="Edit"
+                    [sortable]="false"
+            >
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <ion-button
+                            size="small"
+                            color="tertiary"
+                            [routerLink]="['/users', row.uid, 'edit']"
+                            [disabled]="row.customClaims.DEV === true && (currentUser$ | async)?.customClaims?.DEV === undefined"
+                    >
+                        Edit
+                    </ion-button>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <!--    Delete Button    -->
+            <ngx-datatable-column
+                    name="Delete"
+                    [sortable]="false"
+            >
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <ion-button
+                            size="small"
+                            (click)="alertService.presentDeleteConfirm(row)"
+                            color="danger"
+                            [disabled]="row.customClaims.DEV === true && (currentUser$ | async)?.customClaims?.DEV === undefined"
+                    >
+                        <ion-icon name="trash-bin-outline"></ion-icon>
+                        Delete
+                    </ion-button>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+
+        <ion-col
+                *ngIf="table.rowCount === 0"
+                size="6"
+                offset="5"
+        >
+            <ion-spinner class="spinner-loading"></ion-spinner>
+        </ion-col>
+    </section>
 </ion-content>
