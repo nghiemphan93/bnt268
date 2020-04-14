@@ -1,4 +1,3 @@
-import {Transaction} from './transaction';
 import {User} from 'firebase';
 
 export class Order {

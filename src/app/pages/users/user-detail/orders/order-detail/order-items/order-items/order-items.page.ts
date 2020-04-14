@@ -1,30 +1,33 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Observable, Subscription} from 'rxjs';
-import {Order} from '../../../../../models/order';
-import {User} from 'firebase';
+import {Order} from '../../../../../../../models/order';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
-import {OrderService} from '../../../../../services/order.service';
+import {User} from 'firebase';
+import {OrderService} from '../../../../../../../services/order.service';
 import {AlertController, Config, Platform} from '@ionic/angular';
 import {ActivatedRoute} from '@angular/router';
-import {AlertService} from '../../../../../services/alert.service';
-import {ToastService} from '../../../../../services/toast.service';
-import {AuthService} from '../../../../../services/auth.service';
-import {UserService} from '../../../../../services/user.service';
+import {AlertService} from '../../../../../../../services/alert.service';
+import {ToastService} from '../../../../../../../services/toast.service';
+import {AuthService} from '../../../../../../../services/auth.service';
+import {UserService} from '../../../../../../../services/user.service';
+import {OrderItem} from '../../../../../../../models/orderitem';
+import {OrderItemService} from '../../../../../../../services/order-item.service';
 
 @Component({
-    selector: 'app-orders',
-    templateUrl: './orders.page.html',
-    styleUrls: ['./orders.page.scss'],
+    selector: 'app-order-items',
+    templateUrl: './order-items.page.html',
+    styleUrls: ['./order-items.page.scss'],
 })
-export class OrdersPage implements OnInit, OnDestroy {
+export class OrderItemsPage implements OnInit, OnDestroy {
     subscription = new Subscription();
-    ordersDesktop$: Observable<Order[]>;
-    ordersMobile$: Observable<Order[]>[] = [];
-    orders: Order[] = [];
+    orderItemsDesktop$: Observable<OrderItem[]>;
+    orderItemsMobile$: Observable<OrderItem[]>[] = [];
+    orderItems: OrderItem[] = [];
     tableStyle = 'material';
     isDesktop: boolean;
     isMobile: boolean;
     userId: string;
+    orderId: string;
     skeletons = [1, 2];
     editingOrderItem = {};
     customActionSheetOptions: any = {
@@ -33,6 +36,7 @@ export class OrdersPage implements OnInit, OnDestroy {
     @ViewChild('table', {static: false}) table: DatatableComponent;
     currentUser$ = this.authService.getCurrentUser$();
     user$: Observable<User | any>;
+    order$: Observable<Order>;
     isAuth$ = this.authService.getIsAuth$();
 
     constructor(
@@ -44,7 +48,8 @@ export class OrdersPage implements OnInit, OnDestroy {
         public alertService: AlertService,
         private toastService: ToastService,
         private authService: AuthService,
-        private userService: UserService
+        private userService: UserService,
+        private orderItemService: OrderItemService
     ) {
     }
 
@@ -55,7 +60,7 @@ export class OrdersPage implements OnInit, OnDestroy {
 
     ionViewDidEnter() {
         if (this.isDesktop) {
-            this.ordersDesktop$ = this.orderService.getOrders(this.userId);
+            this.orderItemsDesktop$ = this.orderItemService.getOrderItems(this.userId, this.orderId);
         }
     }
 
@@ -88,6 +93,8 @@ export class OrdersPage implements OnInit, OnDestroy {
     private setup() {
         this.userId = this.activatedRoute.snapshot.params.userId;
         this.user$ = this.userService.getUser(this.userId);
+        this.orderId = this.activatedRoute.snapshot.params.orderId;
+        this.order$ = this.orderService.getOrder(this.userId, this.orderId);
         this.isDesktop = this.platform.is('desktop');
         this.isMobile = !this.platform.is('desktop');
     }
@@ -110,11 +117,11 @@ export class OrdersPage implements OnInit, OnDestroy {
 
     /**
      * Add new or updated Order Items to this.orderItems based on OrderItem's index
-     * @param moreOrder: OrderItem[]
+     * @param moreOrderItems: OrderItem[]
      */
-    private addPaginatedOrders(moreOrder: Order[]) {
-        if (moreOrder.length > 0) {
-            const orderIndex = this.orders.findIndex(orderItem => orderItem.id === moreOrder[0].id);
+    private addPaginatedOrderItems(moreOrderItems: OrderItem[]) {
+        if (moreOrderItems.length > 0) {
+            const orderIndex = this.orderItems.findIndex(orderItem => orderItem.id === moreOrderItems[0].id);
             if (orderIndex >= 0) {
                 console.log('edited order item from block: ' + orderIndex);
             } else {
@@ -122,13 +129,13 @@ export class OrdersPage implements OnInit, OnDestroy {
             }
 
             if (orderIndex >= 0) {
-                const orders = [...this.orders];
-                orders.splice(orderIndex, moreOrder.length, ...moreOrder);
-                this.orders = orders;
+                const orderItems = [...this.orderItems];
+                orderItems.splice(orderIndex, moreOrderItems.length, ...moreOrderItems);
+                this.orderItems = orderItems;
             } else {
-                let orders = [...this.orders];
-                orders = [...orders, ...moreOrder];
-                this.orders = [...orders];
+                let orderItems = [...this.orderItems];
+                orderItems = [...orderItems, ...moreOrderItems];
+                this.orderItems = [...orderItems];
             }
         }
     }

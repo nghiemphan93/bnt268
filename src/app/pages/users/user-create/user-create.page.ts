@@ -18,7 +18,7 @@ import {LoadingService} from '../../../services/loading.service';
 })
 export class UserCreatePage implements OnInit, OnDestroy {
     subscription = new Subscription();
-    user: any;
+    user: User | any;
     validationForm: FormGroup;
     isCreated: boolean;
     isUpdated: boolean;

@@ -134,7 +134,7 @@
                 <ion-button
                         color="tertiary"
                         [routerLink]="['/users', userId, 'orders']"
-                        *ngIf="(currentUser$ | async)?.customClaims?.DEV === true || (currentUser$ | async)?.customClaims?.ADMIN === true"
+                        *ngIf="((currentUser$ | async)?.customClaims?.DEV === true || (currentUser$ | async)?.customClaims?.ADMIN === true) && (user?.customClaims?.WORKER === true)"
 
                 >
                     <ion-icon name="pricetags-outline" class="ion-margin-end"></ion-icon>

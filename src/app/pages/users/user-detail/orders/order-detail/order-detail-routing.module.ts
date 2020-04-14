@@ -9,8 +9,8 @@ const routes: Routes = [
         component: OrderDetailPage
     },
     {
-        path: 'transactions',
-        loadChildren: () => import('./transactions/transactions.module').then(m => m.TransactionsPageModule)
+        path: 'orderItems',
+        loadChildren: () => import('./order-items/order-items.module').then(m => m.OrderItemsPageModule)
     }
 ];
 

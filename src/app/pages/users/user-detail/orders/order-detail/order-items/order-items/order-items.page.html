@@ -4,7 +4,7 @@
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>
-            {{ (user$ | async)?.email }}
+            {{ (order$ | async)?.orderName }} của {{ (user$ | async)?.email }}
         </ion-title>
     </ion-toolbar>
 </ion-header>
@@ -15,11 +15,11 @@
 >
     <section class="container">
         <ion-button
-                [routerLink]="['/users', userId, 'orders', 'create']"
+                [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', 'create']"
                 *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims.WORKER"
         >
             <ion-icon name="add-circle-outline"></ion-icon>
-            Tháng mới
+            Đơn hàng mới
         </ion-button>
 
         <ion-grid fixed>
@@ -42,7 +42,7 @@
 
         <ngx-datatable
             #table
-            [rows]="ordersDesktop$ | async"
+            [rows]="orderItemsDesktop$ | async"
             [rowHeight]="'auto'"
             [headerHeight]="50"
             [ngClass]="tableStyle"
@@ -51,54 +51,102 @@
             class="ion-text-wrap"
             style="overflow: hidden"
         >
-            <!--    Order  Name   -->
+            <!--    Order Item Name   -->
             <ngx-datatable-column
-                    name="Tháng"
-                    prop="orderName"
+                    name="Ngày"
+                    prop="createdAt"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+
                     <ion-button
                             color="dark"
-                            [routerLink]="['/users', userId, 'orders', row.id, 'orderItems']"
-                    >
-                        {{ row.orderName }}
+                            [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', row.id]"
+                    >{{ row.createdAt.toDate() | date: 'dd/MM/yyyy' }}
+                        <ion-icon name="chevron-forward-circle-outline"></ion-icon>
                     </ion-button>
                 </ng-template>
             </ngx-datatable-column>
 
-            <!--    Order  Comment   -->
+            <!--    Order Item Comment   -->
             <ngx-datatable-column
                     name="Comment"
-                    prop="orderComment"
+                    prop="orderItemComment"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    {{ row.orderComment }}
+                    {{ row.orderItemComment }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <!--    Order  createdAt   -->
+            <!--    Order Item Kind   -->
             <ngx-datatable-column
-                    name="Được tạo từ"
-                    prop="createdAt"
+                    name="Giao/ Nhận"
+                    prop="orderItemKind"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    {{ row.createdAt.toDate() | date: 'dd/MM/yyyy' }}
+                    {{ row.orderItemKind }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <!--    Delete    -->
+            <!--    Order Item Products   -->
+            <ngx-datatable-column
+                    name="Sản phẩm"
+                    prop="orderItemProducts"
+            >
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template
+                             class=""
+                >
+                    <p *ngFor="let product of row.orderItemProducts; let i = index">
+                        {{ product.productName }}
+                    </p>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <!--    Order Item Quantities   -->
+            <ngx-datatable-column
+                    name="Số lượng"
+                    prop="orderItemQuantities"
+            >
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template
+                             class=""
+                >
+                    <p *ngFor="let quantity of row.orderItemQuantities; let i = index">
+                        {{ quantity }} cái
+                    </p>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <!--    Order Item Weight   -->
+            <ngx-datatable-column
+                    name="Tổng cân nặng"
+                    prop="orderItemWeight"
+            >
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    {{ row.orderItemWeight }} chỉ
+                </ng-template>
+            </ngx-datatable-column>
+
+            <!--            &lt;!&ndash;    Order Item createdAt   &ndash;&gt;-->
+            <!--            <ngx-datatable-column-->
+            <!--                    name="Được tạo từ"-->
+            <!--                    prop="createdAt"-->
+            <!--            >-->
+            <!--                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>-->
+            <!--                    {{ row.createdAt.toDate() | date: 'dd/MM/yyyy' }}-->
+            <!--                </ng-template>-->
+            <!--            </ngx-datatable-column>-->
+
+            <!--    Edit    -->
             <ngx-datatable-column
                     name="Edit"
                     [sortable]="false"
-                    *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims.WORKER"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <ion-button
                             size="small"
-                            [routerLink]="['/users', userId, 'orders', row.id, 'edit']"
+                            [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', row.id, 'edit']"
                             color="dark"
                     >
-                        <ion-icon name="settings-outline" class="ion-margin-end"></ion-icon>
+                        <ion-icon name="settings-outline" class=""></ion-icon>
                         Sửa
                     </ion-button>
                 </ng-template>

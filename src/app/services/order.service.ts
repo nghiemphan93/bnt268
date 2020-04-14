@@ -35,8 +35,8 @@ export class OrderService {
      */
     getOrders(userId: string): Observable<Order[]> {
         this.orders = this.afs
-            .collection<Order>('users')
-            .doc<Order>(userId)
+            .collection<User>('users')
+            .doc<User>(userId)
             .collection<Order>('orders')
             .snapshotChanges().pipe(
                 takeUntil(this.authService.getIsAuth$().pipe(filter(isAuth => isAuth === false))),
@@ -78,7 +78,7 @@ export class OrderService {
     async createOrder(userId: string, order: Order): Promise<DocumentReference> {
         return await this.afs
             .collection<User>('users')
-            .doc<Order>(userId)
+            .doc<User>(userId)
             .collection<Order>('orders')
             .add({...order});
     }
@@ -178,7 +178,7 @@ export class OrderService {
         console.log('-----------------------------------');
         actions.forEach(act => {
             // @ts-ignore
-            console.log(act.payload.doc.data().orderCode + ' from cache=' + act.payload.doc.metadata.fromCache + ' type=' + act.type);
+            console.log(act.payload.doc.data().orderName + ' from cache=' + act.payload.doc.metadata.fromCache + ' type=' + act.type);
             if (act.type !== 'added') {
                 isAdded = false;
                 return;
