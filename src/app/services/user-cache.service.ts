@@ -10,13 +10,17 @@ import {ToastService} from './toast.service';
 })
 export class UserCacheService {
     usersCache: (User | any)[];
-    usersSubject = new BehaviorSubject<User | any>(null);
+    usersSubject = new BehaviorSubject<User | any>([]);
 
     constructor(private userService: UserService,
                 private authService: AuthService,
                 private toastService: ToastService
     ) {
         console.log('user cache service created...');
+    }
+
+    init() {
+        console.log('initializing user cache service...');
     }
 
     getUsersCache$(): Observable<(User | any)[]> {
@@ -31,6 +35,7 @@ export class UserCacheService {
                         this.usersCache = usersFromServer;
                         this.usersSubject.next(this.usersCache);
                     });
+                return this.usersSubject.asObservable();
             } catch (e) {
                 console.log(e);
             }

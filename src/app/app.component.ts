@@ -5,6 +5,7 @@ import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {AuthService} from './services/auth.service';
 import {Router} from '@angular/router';
+import {UserCacheService} from './services/user-cache.service';
 
 @Component({
     selector: 'app-root',
@@ -44,7 +45,8 @@ export class AppComponent implements OnInit {
         private splashScreen: SplashScreen,
         private statusBar: StatusBar,
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private userCacheService: UserCacheService
     ) {
         this.initializeApp();
     }
@@ -56,11 +58,12 @@ export class AppComponent implements OnInit {
         });
     }
 
+    initServices() {
+        this.userCacheService.init();
+    }
+
     ngOnInit() {
-        // const pathComponents: string[] = window.location.pathname.split('/');
-        // if (path !== undefined) {
-        //   this.selectedIndex = this.appPages.findIndex(page => page.title.toLowerCase() === path.toLowerCase());
-        // }
+        // this.initServices();
     }
 
     setSelected(selectedIndex: number) {

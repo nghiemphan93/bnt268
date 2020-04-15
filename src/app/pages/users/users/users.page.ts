@@ -46,6 +46,7 @@ export class UsersPage implements OnInit, OnDestroy {
     }
 
     ionViewDidEnter() {
+
     }
 
     ngOnDestroy() {

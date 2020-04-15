@@ -12,6 +12,7 @@ import {AuthService} from '../../../../../../../services/auth.service';
 import {UserService} from '../../../../../../../services/user.service';
 import {OrderItem} from '../../../../../../../models/orderitem';
 import {OrderItemService} from '../../../../../../../services/order-item.service';
+import {OrderItemCacheService} from '../../../../../../../services/order-item-cache.service';
 
 @Component({
     selector: 'app-order-items',
@@ -49,7 +50,8 @@ export class OrderItemsPage implements OnInit, OnDestroy {
         private toastService: ToastService,
         private authService: AuthService,
         private userService: UserService,
-        private orderItemService: OrderItemService
+        private orderItemService: OrderItemService,
+        private orderItemCacheService: OrderItemCacheService
     ) {
     }
 
@@ -60,7 +62,7 @@ export class OrderItemsPage implements OnInit, OnDestroy {
 
     ionViewDidEnter() {
         if (this.isDesktop) {
-            this.orderItemsDesktop$ = this.orderItemService.getOrderItems(this.userId, this.orderId);
+            this.orderItemsDesktop$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
         }
     }
 

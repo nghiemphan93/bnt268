@@ -10,6 +10,7 @@ import {AlertService} from '../../../../../services/alert.service';
 import {ToastService} from '../../../../../services/toast.service';
 import {AuthService} from '../../../../../services/auth.service';
 import {UserService} from '../../../../../services/user.service';
+import {OrderCacheService} from '../../../../../services/order-cache.service';
 
 @Component({
     selector: 'app-orders',
@@ -44,7 +45,8 @@ export class OrdersPage implements OnInit, OnDestroy {
         public alertService: AlertService,
         private toastService: ToastService,
         private authService: AuthService,
-        private userService: UserService
+        private userService: UserService,
+        private orderCacheService: OrderCacheService
     ) {
     }
 
@@ -55,7 +57,7 @@ export class OrdersPage implements OnInit, OnDestroy {
 
     ionViewDidEnter() {
         if (this.isDesktop) {
-            this.ordersDesktop$ = this.orderService.getOrders(this.userId);
+            this.ordersDesktop$ = this.orderCacheService.getOrdersCache$ByUserId(this.userId);
         }
     }
 

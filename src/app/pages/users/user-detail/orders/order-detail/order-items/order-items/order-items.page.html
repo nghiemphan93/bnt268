@@ -61,7 +61,7 @@
                     <ion-button
                             color="dark"
                             [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', row.id]"
-                    >{{ row.createdAt.toDate() | date: 'dd/MM/yyyy' }}
+                    >{{ row.createdAt.toDate() | date: 'dd/MM/yy' }}
                         <ion-icon name="chevron-forward-circle-outline"></ion-icon>
                     </ion-button>
                 </ng-template>
