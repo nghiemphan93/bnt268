@@ -1,8 +1,6 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 
-import {OrderItemsPage} from './order-items.page';
-
 const routes: Routes = [
     {
         path: '',
