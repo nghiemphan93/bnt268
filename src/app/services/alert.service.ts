@@ -7,6 +7,8 @@ import {User} from 'firebase';
 import {AuthService} from './auth.service';
 import {OrderService} from './order.service';
 import {ProductService} from './product.service';
+import {OrderItem} from '../models/orderitem';
+import {OrderItemService} from './order-item.service';
 
 @Injectable({
     providedIn: 'root'
@@ -17,11 +19,12 @@ export class AlertService {
                 private toastService: ToastService,
                 private authService: AuthService,
                 private orderService: OrderService,
-                private productService: ProductService
+                private productService: ProductService,
+                private orderItemService: OrderItemService
     ) {
     }
 
-    async presentDeleteConfirm(toDeleteObject: Order | Product | User) {
+    async presentDeleteConfirm(toDeleteObject: OrderItem | Order | Product | User) {
         const alert = await this.alertController.create({
             header: 'Confirm!',
             message: '<strong>Are you sure to delete?</strong>!!!',
@@ -45,8 +48,13 @@ export class AlertService {
         await alert.present();
     }
 
-    private async deleteObjectHelper(toDeleteObject: Order | Product | User) {
+    private async deleteObjectHelper(toDeleteObject: OrderItem | Order | Product | User) {
         try {
+            if (toDeleteObject.hasOwnProperty('orderItemName')) {
+                const toDeleteOrderItem = toDeleteObject as OrderItem;
+                await this.orderItemService.deleteOrderItem(toDeleteOrderItem.order.user.uid, toDeleteOrderItem.order.id, toDeleteOrderItem);
+                await this.toastService.presentToastSuccess(`Successfully deleted Order Item ${toDeleteOrderItem.id}`);
+            }
             if (toDeleteObject.hasOwnProperty('orderName')) {
                 const toDeleteOrder = toDeleteObject as Order;
                 await this.orderService.deleteOrder(toDeleteOrder.user.uid, toDeleteOrder);
