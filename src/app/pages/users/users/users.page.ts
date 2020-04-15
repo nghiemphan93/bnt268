@@ -10,6 +10,7 @@ import {log} from 'util';
 import {Claim} from '../../../models/claim.enum';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {ToastService} from '../../../services/toast.service';
+import {UserCacheService} from '../../../services/user-cache.service';
 
 @Component({
     selector: 'app-users',
@@ -32,7 +33,8 @@ export class UsersPage implements OnInit, OnDestroy {
                 private userService: UserService,
                 public claimService: ClaimService,
                 public alertService: AlertService,
-                private toastService: ToastService
+                private toastService: ToastService,
+                private userCacheService: UserCacheService
     ) {
     }
 
@@ -40,7 +42,7 @@ export class UsersPage implements OnInit, OnDestroy {
         this.preparePlatform();
         this.presentToastErrorIfTableNoData();
         this.currentUser$ = this.authService.getCurrentUser$();
-        this.users$ = this.userService.getUsers();
+        this.users$ = this.userCacheService.getUsersCache$();
     }
 
     ionViewDidEnter() {
