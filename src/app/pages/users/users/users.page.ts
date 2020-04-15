@@ -51,6 +51,7 @@ export class UsersPage implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         console.log('bye bye UserSPage...');
+        window.dispatchEvent(new Event('resize'));
     }
 
     presentToastErrorIfTableNoData() {

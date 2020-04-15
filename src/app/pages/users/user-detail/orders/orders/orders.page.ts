@@ -11,6 +11,7 @@ import {ToastService} from '../../../../../services/toast.service';
 import {AuthService} from '../../../../../services/auth.service';
 import {UserService} from '../../../../../services/user.service';
 import {OrderCacheService} from '../../../../../services/order-cache.service';
+import {StatusService} from '../../../../../services/status.service';
 
 @Component({
     selector: 'app-orders',
@@ -46,7 +47,8 @@ export class OrdersPage implements OnInit, OnDestroy {
         private toastService: ToastService,
         private authService: AuthService,
         private userService: UserService,
-        private orderCacheService: OrderCacheService
+        private orderCacheService: OrderCacheService,
+        private statusService: StatusService
     ) {
     }
 

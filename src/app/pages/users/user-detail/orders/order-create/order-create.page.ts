@@ -10,6 +10,8 @@ import {User} from 'firebase';
 import {ToastService} from '../../../../../services/toast.service';
 import {IonButton} from '@ionic/angular';
 import {UserService} from '../../../../../services/user.service';
+import {StatusService} from '../../../../../services/status.service';
+import {Status} from '../../../../../models/status.enum';
 
 @Component({
     selector: 'app-order-create',
@@ -29,6 +31,8 @@ export class OrderCreatePage implements OnInit, OnDestroy {
     userId: string;
     user$: Observable<User | any>;
     user: User | any;
+    statuses = this.statusService.getStatuses();
+
 
     constructor(private orderService: OrderService,
                 private formBuilder: FormBuilder,
@@ -37,7 +41,8 @@ export class OrderCreatePage implements OnInit, OnDestroy {
                 private loadingService: LoadingService,
                 private authService: AuthService,
                 private toastService: ToastService,
-                private userService: UserService
+                private userService: UserService,
+                private statusService: StatusService
     ) {
     }
 
@@ -50,6 +55,7 @@ export class OrderCreatePage implements OnInit, OnDestroy {
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
+        window.dispatchEvent(new Event('resize'));
     }
 
     /**
@@ -127,6 +133,7 @@ export class OrderCreatePage implements OnInit, OnDestroy {
         try {
             if (this.isCreated) {
                 this.order.createdAt = new Date();
+                this.order.orderStatus = Status.PENDING;
                 const documentRef = await this.orderService.createOrder(this.userId, this.order);
                 console.log(documentRef);
                 await this.toastService.presentToastSuccess(`Created ${this.order.orderName} successfully`);

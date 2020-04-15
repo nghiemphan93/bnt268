@@ -15,6 +15,14 @@
 >
     <section class="container">
         <ion-button
+                [routerLink]="['/users']"
+                color="dark"
+        >
+            <ion-icon name="arrow-back-outline"></ion-icon>
+            Quay về danh sách nhân viên
+        </ion-button>
+
+        <ion-button
                 [routerLink]="['/users', userId, 'orders', 'create']"
                 *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims.WORKER"
         >
@@ -78,11 +86,15 @@
 
             <!--    Order  createdAt   -->
             <ngx-datatable-column
-                    name="Được tạo từ"
-                    prop="createdAt"
+                    name="Tình trạng"
+                    prop="orderStatus"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    {{ row.createdAt.toDate() | date: 'dd/MM/yyyy' }}
+                    <ion-badge
+                            color="warning"
+                    >
+                        {{ row.orderStatus }}
+                    </ion-badge>
                 </ng-template>
             </ngx-datatable-column>
 

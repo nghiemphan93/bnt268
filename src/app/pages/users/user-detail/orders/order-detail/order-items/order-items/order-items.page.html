@@ -15,6 +15,14 @@
 >
     <section class="container">
         <ion-button
+                [routerLink]="['/users', userId, 'orders']"
+                color="dark"
+        >
+            <ion-icon name="arrow-back-outline"></ion-icon>
+            Quay về các tháng
+        </ion-button>
+
+        <ion-button
                 [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', 'create']"
                 *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims.WORKER"
         >
@@ -60,6 +68,7 @@
 
                     <ion-button
                             color="dark"
+                            size="small"
                             [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', row.id]"
                     >{{ row.createdAt.toDate() | date: 'dd/MM/yy' }}
                         <ion-icon name="chevron-forward-circle-outline"></ion-icon>
@@ -73,7 +82,12 @@
                     prop="orderItemComment"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    {{ row.orderItemComment }}
+                    <ion-badge
+                            *ngIf="row.orderItemComment !== ''"
+                            color="medium"
+                    >
+                        {{ row.orderItemComment }}
+                    </ion-badge>
                 </ng-template>
             </ngx-datatable-column>
 
@@ -83,7 +97,9 @@
                     prop="orderItemKind"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    {{ row.orderItemKind }}
+                    <ion-badge color="success">
+                        {{ row.orderItemKind }}
+                    </ion-badge>
                 </ng-template>
             </ngx-datatable-column>
 
@@ -96,7 +112,9 @@
                              class=""
                 >
                     <p *ngFor="let product of row.orderItemProducts; let i = index">
-                        {{ product.productName }}
+                        <ion-badge color="primary">
+                            {{ product.productName }}
+                        </ion-badge>
                     </p>
                 </ng-template>
             </ngx-datatable-column>
@@ -110,7 +128,9 @@
                              class=""
                 >
                     <p *ngFor="let quantity of row.orderItemQuantities; let i = index">
-                        {{ quantity }} cái
+                        <ion-badge color="tertiary">
+                            {{ quantity }} cái
+                        </ion-badge>
                     </p>
                 </ng-template>
             </ngx-datatable-column>
@@ -121,7 +141,11 @@
                     prop="orderItemWeight"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    {{ row.orderItemWeight }} chỉ
+                    <p>
+                        <ion-badge color="warning">
+                            {{ row.orderItemWeight }} chỉ
+                        </ion-badge>
+                    </p>
                 </ng-template>
             </ngx-datatable-column>
 

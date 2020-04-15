@@ -145,6 +145,7 @@
                             *ngIf="!isDetailed"
                             (click)="addProductAndQuantityFormControl()"
                             size="small"
+                            class="ion-margin-top"
                     >
                         <ion-icon name="add-circle-outline"></ion-icon>
                         Thêm sản phẩm và số lượng
@@ -153,13 +154,12 @@
                     <section
                             formArrayName="orderItemProducts"
                             *ngFor="let _ of orderItemProducts?.controls; index as i"
-                            class="ion-margin-bottom"
+                            class="ion-margin-bottom ion-margin-start"
                     >
                         <!--    Products   -->
                         <ion-card>
-                            <ion-item>
+                            <ion-item *ngIf="!isDetailed">
                                 <ion-button
-                                        *ngIf="!isDetailed"
                                         color="danger"
                                         slot="end"
                                         size="small"
@@ -176,6 +176,7 @@
                                         interface="popover"
                                         [compareWith]="compareWithFn"
                                         [formControl]="orderItemProducts.controls[i]"
+                                        slot="end"
                                 >
                                     <ion-select-option
                                             *ngFor="let product of products$ | async"
@@ -190,6 +191,7 @@
                                         interface="popover"
                                         [compareWith]="compareWithFn"
                                         [formControl]="orderItemProducts.controls[i]"
+                                        slot="end"
                                 >
                                     <ion-select-option
                                             *ngFor="let product of products$ | async"
@@ -202,7 +204,9 @@
                                 <ion-label
                                         *ngIf="isDetailed"
                                 >
-                                    {{ orderItem.orderItemProducts[i].productName }}
+                                    <ion-badge color="primary">
+                                        {{ orderItem.orderItemProducts[i].productName }}
+                                    </ion-badge>
                                 </ion-label>
                             </ion-item>
 
@@ -216,7 +220,11 @@
                                         [formControl]="orderItemQuantities.controls[i]"
                                 ></ion-input>
 
-                                <ion-label *ngIf="isDetailed">{{ orderItem.orderItemQuantities[i] }} cái</ion-label>
+                                <ion-label *ngIf="isDetailed">
+                                    <ion-badge color="tertiary">
+                                        {{ orderItem.orderItemQuantities[i] }} cái
+                                    </ion-badge>
+                                </ion-label>
                             </ion-item>
                         </ion-card>
                     </section>
@@ -232,7 +240,11 @@
                                     *ngIf="!isDetailed"
                             ></ion-input>
 
-                            <ion-label *ngIf="isDetailed">{{ orderItem.orderItemWeight }} chỉ</ion-label>
+                            <ion-label *ngIf="isDetailed">
+                                <ion-badge color="warning">
+                                    {{ orderItem.orderItemWeight }} chỉ
+                                </ion-badge>
+                            </ion-label>
                         </ion-item>
                     </ion-item-group>
 
