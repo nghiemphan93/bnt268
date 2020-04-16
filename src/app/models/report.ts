@@ -13,7 +13,10 @@ export class Report {
     totalGiveWeight = 0;
     totalReceiveWeight = 0;
     totalReceiveWeightAdjusted = 0;
-    weightDifference = 0;
+    totalReceiveBacDatWeight = 0;
+    totalReceiveBacTonWeight = 0;
+    totalReceiveWeightAdjustedIncludeBacDatVaTon = 0;
+    totalWeightDifference = 0;
 
     createdAt: Date;
 }

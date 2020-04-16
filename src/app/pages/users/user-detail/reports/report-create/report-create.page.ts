@@ -34,10 +34,12 @@ export class ReportCreatePage implements OnInit, OnDestroy {
     user$: Observable<User | any>;
     reportId: string;
     report$: Observable<Report>;
-    tableData = [];
+    productsReportData = [];
+    silverReportData = [];
     report: Report;
     tableStyle = 'material';
-    @ViewChild('table', {static: false}) table: DatatableComponent;
+    @ViewChild('productsTable', {static: false}) productsTable: DatatableComponent;
+    @ViewChild('silverTable', {static: false}) silverTable: DatatableComponent;
 
     constructor(private orderService: OrderService,
                 private orderItemService: OrderItemService,
@@ -62,8 +64,13 @@ export class ReportCreatePage implements OnInit, OnDestroy {
 
     presentToastErrorIfTableNoData() {
         setTimeout(async () => {
-            if (this.table.rowCount === 0) {
-                this.table.rowCount = -1;
+            if (this.productsTable.rowCount === 0) {
+                this.productsTable.rowCount = -1;
+                await this.toastService.presentToastError('No data or Network error. Please add more data or refresh the page');
+            }
+
+            if (this.silverTable.rowCount === 0) {
+                this.silverTable.rowCount = -1;
                 await this.toastService.presentToastError('No data or Network error. Please add more data or refresh the page');
             }
         }, 4000);
@@ -84,26 +91,94 @@ export class ReportCreatePage implements OnInit, OnDestroy {
     }
 
     prepareTableData() {
-        this.report$.subscribe(report => {
-            this.report = report;
-            const tableData = [];
-            let totalPrice = 0;
-            for (let i = 0; i < this.report.products.length; i++) {
-                const row: any = {};
-                console.log(this.report.products[i]);
-                row.productName = this.report.products[i].productName;
-                row.quantity = this.report.quantities[i];
-                row.price = this.report.products[i].productPrice;
-                row.totalPrice = row.quantity * row.price;
-                totalPrice += row.totalPrice;
-                tableData.push(row);
-            }
-
-            const lastRow: any = {};
-            lastRow.totalPrice = totalPrice;
-            tableData.push(lastRow);
-            this.tableData = [...tableData];
+        this.report$.subscribe(reportFromServer => {
+            this.report = reportFromServer;
+            console.log(this.report);
+            this.prepareProductsData();
+            this.prepareSilverData();
         });
     }
 
+    prepareProductsData() {
+        const productsReportData = [];
+        let totalPrice = 0;
+        for (let i = 0; i < this.report.products.length; i++) {
+            const row: any = {};
+            row.productName = this.report.products[i].productName;
+            row.quantity = this.report.quantities[i];
+            row.price = this.report.products[i].productPrice;
+            row.totalPrice = row.quantity * row.price;
+            totalPrice += row.totalPrice;
+            productsReportData.push(row);
+        }
+
+        const lastRow: any = {};
+        lastRow.totalPrice = totalPrice;
+        productsReportData.push(lastRow);
+        this.productsReportData = [...productsReportData];
+    }
+
+    prepareSilverData() {
+        const silverReportData = [];
+        let rowNumber = 0;
+        if (this.report.giveWeights.length >= this.report.receiveWeights.length) {
+            rowNumber = this.report.giveWeights.length;
+        } else {
+            rowNumber = this.report.receiveWeights.length;
+        }
+
+        for (let i = 0; i < rowNumber; i++) {
+            const row: any = {};
+            row.firstColumn = '';
+            row.giveWeight = this.report.giveWeights[i];
+            row.receiveWeight = this.report.receiveWeights[i] + ' chỉ';
+            if (this.report.giveWeights[i] === undefined || this.report.giveWeights[i] === null) {
+                row.giveWeight = 0;
+            }
+            if (this.report.receiveWeights[i] === undefined || this.report.receiveWeights[i] === null) {
+                row.receiveWeight = 0;
+            }
+            silverReportData.push(row);
+        }
+
+        const totalGiveReceiveRow: any = {};
+        totalGiveReceiveRow.firstColumn = 'Tổng Giao và Nhận';
+        totalGiveReceiveRow.giveWeight = this.report.totalGiveWeight;
+        totalGiveReceiveRow.receiveWeight = this.report.totalReceiveWeight + ' chỉ';
+        silverReportData.push(totalGiveReceiveRow);
+
+        const receiveWeightAdjustedRow: any = {};
+        receiveWeightAdjustedRow.firstColumn = 'Nhận Cộng Hao';
+        receiveWeightAdjustedRow.giveWeight = 0;
+        // receiveWeightAdjustedRow.receiveWeight = this.report.totalReceiveWeightAdjusted;
+        receiveWeightAdjustedRow.receiveWeight = `${this.report.totalReceiveWeight} chỉ x 1.05 = ${this.report.totalReceiveWeightAdjusted} chỉ`;
+        silverReportData.push(receiveWeightAdjustedRow);
+
+        const bacDatRow: any = {};
+        bacDatRow.firstColumn = 'Bạc Dát';
+        bacDatRow.giveWeight = 0;
+        bacDatRow.receiveWeight = this.report.totalReceiveBacDatWeight + ' chỉ';
+        silverReportData.push(bacDatRow);
+
+        const bacTonRow: any = {};
+        bacTonRow.firstColumn = 'Bạc Tồn';
+        bacTonRow.giveWeight = 0;
+        bacTonRow.receiveWeight = this.report.totalReceiveBacTonWeight + ' chỉ';
+        silverReportData.push(bacTonRow);
+
+        const receiveWeightAdjustedIncludeBacDatRow: any = {};
+        receiveWeightAdjustedIncludeBacDatRow.firstColumn = 'Tổng đã cộng hao, tồn và dát';
+        receiveWeightAdjustedIncludeBacDatRow.giveWeight = this.report.totalGiveWeight;
+        // receiveWeightAdjustedIncludeBacDatRow.receiveWeight = this.report.totalReceiveWeightAdjustedIncludeBacDat;
+        receiveWeightAdjustedIncludeBacDatRow.receiveWeight = `${this.report.totalReceiveWeightAdjusted} + ${this.report.totalReceiveBacDatWeight} + ${this.report.totalReceiveBacTonWeight} = ${this.report.totalReceiveWeightAdjustedIncludeBacDatVaTon} chỉ`;
+        silverReportData.push(receiveWeightAdjustedIncludeBacDatRow);
+
+        const giveReceiveDifferenceRow: any = {};
+        giveReceiveDifferenceRow.firstColumn = 'Giao - Nhận';
+        giveReceiveDifferenceRow.giveWeight = 0;
+        giveReceiveDifferenceRow.receiveWeight = `${this.report.totalGiveWeight} - ${this.report.totalReceiveWeightAdjustedIncludeBacDatVaTon} = ${this.report.totalWeightDifference} chỉ`;
+        silverReportData.push(giveReceiveDifferenceRow);
+
+        this.silverReportData = [...silverReportData];
+    }
 }

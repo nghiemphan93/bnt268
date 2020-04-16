@@ -109,7 +109,7 @@
                     prop="orderItemKind"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    <ion-badge color="success">
+                    <ion-badge [color]="row.orderItemKind === GIAO ? 'success' : 'danger'">
                         {{ row.orderItemKind }}
                     </ion-badge>
                 </ng-template>
@@ -123,7 +123,7 @@
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template
                              class=""
                 >
-                    <p *ngFor="let product of row.orderItemProducts; let i = index">
+                    <p *ngFor="let product of row.orderItemProducts; let i = index" class="ion-no-margin">
                         <ion-badge color="primary">
                             {{ product.productName }}
                         </ion-badge>
@@ -139,7 +139,7 @@
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template
                              class=""
                 >
-                    <p *ngFor="let quantity of row.orderItemQuantities; let i = index">
+                    <p *ngFor="let quantity of row.orderItemQuantities; let i = index" class="ion-no-margin">
                         <ion-badge color="tertiary">
                             {{ quantity }} cái
                         </ion-badge>
@@ -153,7 +153,7 @@
                     prop="orderItemWeight"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    <p>
+                    <p class="ion-no-margin">
                         <ion-badge color="warning">
                             {{ row.orderItemWeight }} chỉ
                         </ion-badge>
@@ -173,7 +173,7 @@
 
             <!--    Edit    -->
             <ngx-datatable-column
-                    name="Edit"
+                    name="Sửa"
                     [sortable]="false"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
@@ -190,6 +190,7 @@
 
             <!--    Delete    -->
             <ngx-datatable-column
+                    *ngIf="(isAuth$ | async) && (currentUser$ | async)?.customClaims.DEV"
                     name="Delete"
                     [sortable]="false"
             >

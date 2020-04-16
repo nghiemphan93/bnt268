@@ -13,7 +13,7 @@ import {Product} from '../../../../../../../models/product';
 import {AuthService} from '../../../../../../../services/auth.service';
 import {User} from 'firebase';
 import {UserService} from '../../../../../../../services/user.service';
-import {IonButton} from '@ionic/angular';
+import {IonButton, IonSelect} from '@ionic/angular';
 import {Kind} from '../../../../../../../models/kind.enum';
 import {KindService} from '../../../../../../../services/kind.service';
 
@@ -185,9 +185,6 @@ export class OrderItemCreatePage implements OnInit, OnDestroy {
             this.addProductAndQuantityFormControl();
         } else {
             for (let i = 0; i < products.length; i++) {
-                // if (products[i] !== undefined || products[i] !== null) {
-                //     this.addProductAndQuantityFormControl(products[i], quantities[i]);
-                // }
                 this.addProductAndQuantityFormControl(products[i], quantities[i]);
             }
         }
@@ -216,7 +213,7 @@ export class OrderItemCreatePage implements OnInit, OnDestroy {
             }
         }
         for (let i = 0; i < this.orderItem.orderItemProducts.length; i++) {
-            if (this.orderItem.orderItemProducts[i] === null || this.orderItem.orderItemProducts[i] === undefined) {
+            if (this.orderItem.orderItemQuantities[i] === null || this.orderItem.orderItemQuantities[i] === undefined) {
                 this.orderItem.orderItemProducts.splice(i, 1);
                 this.orderItem.orderItemQuantities.splice(i, 1);
             }
@@ -227,6 +224,7 @@ export class OrderItemCreatePage implements OnInit, OnDestroy {
      * Handler Submit button
      */
     async submitHandler(submitButton: IonButton) {
+        // console.log(this.validationForm.value);
         // await this.transferDataFromFormToObject();
         // console.log(this.orderItem);
 
@@ -238,7 +236,6 @@ export class OrderItemCreatePage implements OnInit, OnDestroy {
             if (this.isCreated) {
                 this.orderItem.createdAt = new Date();
                 const result = await this.orderItemService.createOrderItem(this.userId, this.orderId, this.orderItem);
-                console.log(result);
                 this.orderItem.id = result.id;
                 await this.toastService.presentToastSuccess(`Successfully created Order Item ${this.orderItem.orderItemName}`);
                 this.prepareFormValidationCreate();
@@ -267,5 +264,27 @@ export class OrderItemCreatePage implements OnInit, OnDestroy {
      */
     compareWithFn(o1, o2) {
         return o1 && o2 ? o1.id === o2.id : o1 === o2;
+    }
+
+    bacDatHandler(productIndex: number) {
+        const selectedProduct: Product = this.validationForm.value.orderItemProducts[productIndex];
+        const selectedQuantity: number = this.validationForm.value.orderItemQuantities[productIndex];
+        if (selectedProduct.productName.toLowerCase() === 'bạc dát' || selectedProduct.productName.toLowerCase() === 'bạc tồn') {
+            this.orderItemQuantities.at(productIndex).patchValue(0);
+        } else {
+            this.orderItemQuantities.at(productIndex).patchValue(null);
+        }
+    }
+
+    isBacDatOrBacTon(productIndex: number) {
+        const selectedProduct: Product = this.validationForm.value.orderItemProducts[productIndex];
+        const selectedQuantity: number = this.validationForm.value.orderItemQuantities[productIndex];
+        if (selectedProduct) {
+            if (selectedProduct.productName.toLowerCase() === 'bạc dát' || selectedProduct.productName.toLowerCase() === 'bạc tồn') {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }

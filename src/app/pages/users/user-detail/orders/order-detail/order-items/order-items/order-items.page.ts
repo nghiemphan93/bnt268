@@ -45,6 +45,8 @@ export class OrderItemsPage implements OnInit, OnDestroy {
     order$: Observable<Order>;
     isAuth$ = this.authService.getIsAuth$();
     status = this.statusService.getStatuses();
+    GIAO = Kind.GIAO;
+    NHAN = Kind.NHẬN;
 
     constructor(
         private orderService: OrderService,
@@ -167,20 +169,34 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                             const product = orderItem.orderItemProducts[i];
                             const productId = orderItem.orderItemProducts[i].id;
                             const productQuantity = orderItem.orderItemQuantities[i];
-                            if (productQuantityMapper.has(productId)) {
-                                const newTotalQuantity = productQuantityMapper.get(productId) + productQuantity;
-                                productQuantityMapper.set(productId, newTotalQuantity);
-                            } else {
-                                productQuantityMapper.set(productId, productQuantity);
-                                products.push(product);
+
+                            if (product.productName.toLowerCase() === 'bạc dát') {
+                                newReport.totalReceiveBacDatWeight += orderItem.orderItemWeight;
+                                newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
                             }
+
+                            if (product.productName.toLowerCase() === 'bạc tồn') {
+                                newReport.totalReceiveBacTonWeight += orderItem.orderItemWeight;
+                                newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
+                            }
+
+                            if (productQuantity > 0) {
+                                if (productQuantityMapper.has(productId)) {
+                                    const newTotalQuantity = productQuantityMapper.get(productId) + productQuantity;
+                                    productQuantityMapper.set(productId, newTotalQuantity);
+                                } else {
+                                    productQuantityMapper.set(productId, productQuantity);
+                                    products.push(product);
+                                }
+                            }
+
                         }
                         break;
                 }
             });
 
             products.forEach(product => {
-                console.log(`${product.productName} - ${productQuantityMapper.get(product.id)}`);
+                // console.log(`${product.productName} - ${productQuantityMapper.get(product.id)}`);
                 newReport.products.push(product);
                 newReport.quantities.push(productQuantityMapper.get(product.id));
                 newReport.totalPricePerProduct.push(product.productPrice * productQuantityMapper.get(product.id));
@@ -194,13 +210,15 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                 return previousValue + currentValue;
             });
 
-            newReport.totalReceiveWeight = newReport.receiveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+            newReport.totalReceiveWeight = Number(newReport.receiveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
                 return previousValue + currentValue;
-            });
+            }).toFixed(2));
 
-            newReport.totalReceiveWeightAdjusted = newReport.totalReceiveWeight * 1.05;
+            newReport.totalReceiveWeightAdjusted = Number((newReport.totalReceiveWeight * 1.05).toFixed(2));
 
-            newReport.weightDifference = newReport.totalGiveWeight - newReport.totalReceiveWeightAdjusted;
+            newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon = newReport.totalReceiveWeightAdjusted + newReport.totalReceiveBacDatWeight + newReport.totalReceiveBacTonWeight;
+
+            newReport.totalWeightDifference = Number((newReport.totalGiveWeight - newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon).toFixed(2));
             newReport.createdAt = new Date();
 
             console.log(newReport);

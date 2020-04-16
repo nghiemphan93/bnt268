@@ -172,11 +172,12 @@
                             <ion-item>
                                 <ion-label>Sản phẩm</ion-label>
                                 <ion-select
-                                        *ngIf="isCreated"
+                                        *ngIf="!isDetailed"
                                         interface="popover"
                                         [compareWith]="compareWithFn"
                                         [formControl]="orderItemProducts.controls[i]"
                                         slot="end"
+                                        (ionChange)="bacDatHandler(i)"
                                 >
                                     <ion-select-option
                                             *ngFor="let product of products$ | async"
@@ -186,20 +187,20 @@
                                     </ion-select-option>
                                 </ion-select>
 
-                                <ion-select
-                                        *ngIf="isUpdated"
-                                        interface="popover"
-                                        [compareWith]="compareWithFn"
-                                        [formControl]="orderItemProducts.controls[i]"
-                                        slot="end"
-                                >
-                                    <ion-select-option
-                                            *ngFor="let product of products$ | async"
-                                            [value]="product"
-                                    >
-                                        {{ product.productName }}
-                                    </ion-select-option>
-                                </ion-select>
+                                <!--                                <ion-select-->
+                                <!--                                        *ngIf="isUpdated"-->
+                                <!--                                        interface="popover"-->
+                                <!--                                        [compareWith]="compareWithFn"-->
+                                <!--                                        [formControl]="orderItemProducts.controls[i]"-->
+                                <!--                                        slot="end"-->
+                                <!--                                >-->
+                                <!--                                    <ion-select-option-->
+                                <!--                                            *ngFor="let product of products$ | async"-->
+                                <!--                                            [value]="product"-->
+                                <!--                                    >-->
+                                <!--                                        {{ product.productName }}-->
+                                <!--                                    </ion-select-option>-->
+                                <!--                                </ion-select>-->
 
                                 <ion-label
                                         *ngIf="isDetailed"
@@ -218,6 +219,7 @@
                                         type="number"
                                         slot="end"
                                         [formControl]="orderItemQuantities.controls[i]"
+                                        [readonly]="isBacDatOrBacTon(i)"
                                 ></ion-input>
 
                                 <ion-label *ngIf="isDetailed">
