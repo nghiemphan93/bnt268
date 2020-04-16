@@ -57,17 +57,13 @@
 
 
 .datatable-body-cell {
-  padding: 0px !important;
+  padding-top: 0px !important;
+  border-bottom: 0px !important;
 
   .datatable-body-cell-label {
     overflow: hidden;
     height: 100%;
     width: 100%;
-
-    p {
-      padding: 0px !important;
-      margin: 0px !important;
-    }
   }
 }
 

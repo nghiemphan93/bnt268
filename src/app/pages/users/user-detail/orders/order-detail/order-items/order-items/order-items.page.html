@@ -24,10 +24,22 @@
 
         <ion-button
                 [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', 'create']"
-                *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims.WORKER"
+                *ngIf="
+                ((isAuth$ | async) && !(currentUser$ | async)?.customClaims.WORKER)"
         >
+            <!--            [disabled]="(order$ | async)?.orderStatus === status[0]"-->
             <ion-icon name="add-circle-outline"></ion-icon>
             Đơn hàng mới
+        </ion-button>
+
+        <ion-button
+                *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims.WORKER"
+                color="tertiary"
+                [disabled]="!(orderItemsDesktop$ | async)"
+                (click)="prepareReportHandler()"
+        >
+            <ion-icon name="receipt-outline" class="ion-margin-end"></ion-icon>
+            Tổng kết
         </ion-button>
 
         <ion-grid fixed>

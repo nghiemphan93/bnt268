@@ -12,6 +12,7 @@ import {AuthService} from '../../../../../services/auth.service';
 import {UserService} from '../../../../../services/user.service';
 import {OrderCacheService} from '../../../../../services/order-cache.service';
 import {StatusService} from '../../../../../services/status.service';
+import {Status} from '../../../../../models/status.enum';
 
 @Component({
     selector: 'app-orders',
@@ -36,6 +37,8 @@ export class OrdersPage implements OnInit, OnDestroy {
     currentUser$ = this.authService.getCurrentUser$();
     user$: Observable<User | any>;
     isAuth$ = this.authService.getIsAuth$();
+    PENDING = Status.PENDING;
+    DONE = Status.DONE;
 
     constructor(
         private orderService: OrderService,

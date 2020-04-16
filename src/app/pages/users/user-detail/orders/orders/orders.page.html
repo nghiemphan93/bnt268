@@ -84,7 +84,7 @@
                 </ng-template>
             </ngx-datatable-column>
 
-            <!--    Order  createdAt   -->
+            <!--    Order  Status   -->
             <ngx-datatable-column
                     name="Tình trạng"
                     prop="orderStatus"
@@ -95,6 +95,24 @@
                     >
                         {{ row.orderStatus }}
                     </ion-badge>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <!--    Order  report   -->
+            <ngx-datatable-column
+                    name="Tổng kết"
+                    prop=""
+            >
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <ion-button
+                            *ngIf="row.orderStatus === DONE"
+                            size="small"
+                            [routerLink]="['/users', userId, 'reports', row.id]"
+                            color="dark"
+                    >
+                        <ion-icon name="receipt-outline" class="ion-margin-end"></ion-icon>
+                        Tổng kết
+                    </ion-button>
                 </ng-template>
             </ngx-datatable-column>
 

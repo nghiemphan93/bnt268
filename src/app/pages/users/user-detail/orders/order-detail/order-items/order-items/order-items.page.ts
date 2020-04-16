@@ -13,6 +13,11 @@ import {UserService} from '../../../../../../../services/user.service';
 import {OrderItem} from '../../../../../../../models/orderitem';
 import {OrderItemService} from '../../../../../../../services/order-item.service';
 import {OrderItemCacheService} from '../../../../../../../services/order-item-cache.service';
+import {StatusService} from '../../../../../../../services/status.service';
+import {Report} from '../../../../../../../models/report';
+import {Kind} from '../../../../../../../models/kind.enum';
+import {Product} from '../../../../../../../models/product';
+import {ReportService} from '../../../../../../../services/report.service';
 
 @Component({
     selector: 'app-order-items',
@@ -39,6 +44,7 @@ export class OrderItemsPage implements OnInit, OnDestroy {
     user$: Observable<User | any>;
     order$: Observable<Order>;
     isAuth$ = this.authService.getIsAuth$();
+    status = this.statusService.getStatuses();
 
     constructor(
         private orderService: OrderService,
@@ -51,7 +57,9 @@ export class OrderItemsPage implements OnInit, OnDestroy {
         private authService: AuthService,
         private userService: UserService,
         private orderItemService: OrderItemService,
-        private orderItemCacheService: OrderItemCacheService
+        private orderItemCacheService: OrderItemCacheService,
+        private statusService: StatusService,
+        private reportService: ReportService
     ) {
     }
 
@@ -140,5 +148,69 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                 this.orderItems = [...orderItems];
             }
         }
+    }
+
+    prepareReportHandler() {
+        this.subscription.add(this.orderItemsDesktop$.subscribe(async orderItemsFromServer => {
+            const newReport = new Report();
+            const productQuantityMapper = new Map<string, number>();
+            const products: Product[] = [];
+            orderItemsFromServer.forEach(orderItem => {
+                switch (orderItem.orderItemKind) {
+                    case Kind.GIAO:
+                        newReport.giveWeights.push(orderItem.orderItemWeight);
+                        break;
+                    case Kind.NHẬN:
+                        newReport.receiveWeights.push(orderItem.orderItemWeight);
+
+                        for (let i = 0; i < orderItem.orderItemProducts.length; i++) {
+                            const product = orderItem.orderItemProducts[i];
+                            const productId = orderItem.orderItemProducts[i].id;
+                            const productQuantity = orderItem.orderItemQuantities[i];
+                            if (productQuantityMapper.has(productId)) {
+                                const newTotalQuantity = productQuantityMapper.get(productId) + productQuantity;
+                                productQuantityMapper.set(productId, newTotalQuantity);
+                            } else {
+                                productQuantityMapper.set(productId, productQuantity);
+                                products.push(product);
+                            }
+                        }
+                        break;
+                }
+            });
+
+            products.forEach(product => {
+                console.log(`${product.productName} - ${productQuantityMapper.get(product.id)}`);
+                newReport.products.push(product);
+                newReport.quantities.push(productQuantityMapper.get(product.id));
+                newReport.totalPricePerProduct.push(product.productPrice * productQuantityMapper.get(product.id));
+            });
+
+            newReport.totalPrice = newReport.totalPricePerProduct.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                return previousValue + currentValue;
+            });
+
+            newReport.totalGiveWeight = newReport.giveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                return previousValue + currentValue;
+            });
+
+            newReport.totalReceiveWeight = newReport.receiveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                return previousValue + currentValue;
+            });
+
+            newReport.totalReceiveWeightAdjusted = newReport.totalReceiveWeight * 1.05;
+
+            newReport.weightDifference = newReport.totalGiveWeight - newReport.totalReceiveWeightAdjusted;
+            newReport.createdAt = new Date();
+
+            console.log(newReport);
+
+            try {
+                await this.reportService.createReportByOrderId(this.userId, this.orderId, newReport);
+            } catch (e) {
+                console.log(e);
+                await this.toastService.presentToastError(e.message);
+            }
+        }));
     }
 }
