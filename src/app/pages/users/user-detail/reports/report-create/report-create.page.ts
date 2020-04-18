@@ -18,6 +18,8 @@ import {User} from 'firebase';
 import {Report} from '../../../../../models/report';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {takeLast} from 'rxjs/operators';
+import {ReportCacheService} from '../../../../../services/report-cache.service';
+import {Platform} from '@ionic/angular';
 
 @Component({
     selector: 'app-report-create',
@@ -40,6 +42,10 @@ export class ReportCreatePage implements OnInit, OnDestroy {
     tableStyle = 'material';
     @ViewChild('productsTable', {static: false}) productsTable: DatatableComponent;
     @ViewChild('silverTable', {static: false}) silverTable: DatatableComponent;
+    isDesktop: boolean;
+    isMobile: boolean;
+
+    isSilverTableReady = false;
 
     constructor(private orderService: OrderService,
                 private orderItemService: OrderItemService,
@@ -53,6 +59,8 @@ export class ReportCreatePage implements OnInit, OnDestroy {
                 private userService: UserService,
                 private kindService: KindService,
                 private reportService: ReportService,
+                private reportCacheService: ReportCacheService,
+                private platform: Platform,
     ) {
     }
 
@@ -64,12 +72,12 @@ export class ReportCreatePage implements OnInit, OnDestroy {
 
     presentToastErrorIfTableNoData() {
         setTimeout(async () => {
-            if (this.productsTable.rowCount === 0) {
+            if (this.isDesktop && this.productsTable.rowCount === 0) {
                 this.productsTable.rowCount = -1;
                 await this.toastService.presentToastError('No data or Network error. Please add more data or refresh the page');
             }
 
-            if (this.silverTable.rowCount === 0) {
+            if (this.isDesktop && this.silverTable.rowCount === 0) {
                 this.silverTable.rowCount = -1;
                 await this.toastService.presentToastError('No data or Network error. Please add more data or refresh the page');
             }
@@ -88,6 +96,8 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         this.user$ = this.userService.getUser(this.userId);
         this.reportId = this.activatedRoute.snapshot.params.reportId;
         this.report$ = this.reportService.getReport(this.userId, this.reportId);
+        this.isDesktop = this.platform.is('desktop');
+        this.isMobile = !this.platform.is('desktop');
     }
 
     prepareTableData() {
@@ -179,6 +189,37 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         giveReceiveDifferenceRow.receiveWeight = `${this.report.totalGiveWeight} - ${this.report.totalReceiveWeightAdjustedIncludeBacDatVaTon} = ${this.report.totalWeightDifference} chỉ`;
         silverReportData.push(giveReceiveDifferenceRow);
 
+        const lastRow: any = {};
+        lastRow.firstColumn = '';
+        lastRow.giveWeight = 0;
+        lastRow.receiveWeight = `Tổng ${this.report.totalWeightDifference} chỉ`;
+        silverReportData.push(lastRow);
+
         this.silverReportData = [...silverReportData];
+
+
+        // this.configSilverReportTableSize();
+        // console.log(this.silverTable);
+        this.silverTable.resize.emit();
+    }
+
+    ionViewDidEnter() {
+    }
+
+    configSilverReportTableSize() {
+        const totalTableWidth = this.silverTable._innerWidth;
+        const columnPortions = [2, 1, 2];
+        const totalPortions = columnPortions.reduce((previousValue, currentValue) => previousValue + currentValue);
+        for (let i = 0; i < this.silverTable._internalColumns.length; i++) {
+            this.silverTable._internalColumns[i].width = (totalTableWidth / totalPortions) * columnPortions[i];
+        }
+        this.isSilverTableReady = true;
+    }
+
+    testResize() {
+        console.log('resizing...');
+
+        this.configSilverReportTableSize();
+        console.log(this.silverTable);
     }
 }

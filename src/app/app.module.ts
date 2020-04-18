@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {LOCALE_ID, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {RouteReuseStrategy} from '@angular/router';
 
@@ -31,8 +31,13 @@ import {AngularFireAuthGuardModule} from '@angular/fire/auth-guard';
     providers: [
         StatusBar,
         SplashScreen,
-        {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
+        // {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
+        // {
+        //     provide: LOCALE_ID,
+        //     useValue: 'de-DE' // 'de-DE' for Germany, 'fr-FR' for France ...
+        // }
     ],
+    exports: [],
     bootstrap: [AppComponent]
 })
 export class AppModule {

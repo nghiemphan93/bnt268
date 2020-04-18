@@ -8,7 +8,7 @@
 </ion-header>
 
 <!--  Main Table Content for Desktop  -->
-<ion-content>
+<ion-content *ngIf="isDesktop">
     <ion-grid>
         <ion-row>
             <ion-col
@@ -86,7 +86,7 @@
                                         *ngIf="row.price !== undefined"
                                         color="success"
                                 >
-                                    {{ row?.price }} đ
+                                    {{ row?.price | number:'1.0-2' }} đ
                                 </ion-badge>
                             </ng-template>
                         </ngx-datatable-column>
@@ -101,14 +101,15 @@
                                         *ngIf="row?.price !== undefined"
                                         color="warning"
                                 >
-                                    {{ row?.price }}đ x {{ row?.quantity }} = {{ row?.totalPrice }}đ
+                                    {{ row?.price | number:'1.0-2' }} đ x {{ row?.quantity }}
+                                    = {{ row?.totalPrice | number:'1.0-2' }} đ
                                 </ion-badge>
 
                                 <ion-badge
                                         *ngIf="row?.price === undefined"
-                                        color="tertiary"
+                                        color="danger"
                                 >
-                                    Tổng {{ row?.totalPrice | currency:'VND'}}
+                                    Tổng {{ row?.totalPrice | number:'1.0-2' }} đ
                                 </ion-badge>
                             </ng-template>
                         </ngx-datatable-column>
@@ -156,6 +157,7 @@
                                         class="ion-text-wrap"
                                         style="overflow: hidden"
                                         #silverTable
+                                        (resize)="testResize()"
                                 >
                                     <!--    First Column   -->
                                     <ngx-datatable-column
@@ -195,7 +197,7 @@
                                         <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                                             <ion-badge
                                                     *ngIf="row.receiveWeight !== 0"
-                                                    color="warning"
+                                                    [color]="row.receiveWeight.includes('Tổng') ? 'danger' : 'warning'"
                                             >
                                                 {{ row?.receiveWeight }}
                                             </ion-badge>

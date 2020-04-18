@@ -39,7 +39,8 @@
             <!--    Product Price    -->
             <ngx-datatable-column name="Giá" prop="productPrice">
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    {{ row.productPrice | currency:'VND':'symbol':'4.0' }} VND
+                    <!--                    {{ row.productPrice | currency:'VND':'symbol':'4.0' }} VND-->
+                    {{ row.productPrice | number:'1.0-2' }} đ
                 </ng-template>
             </ngx-datatable-column>
 
