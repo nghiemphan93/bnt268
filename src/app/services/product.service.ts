@@ -14,10 +14,6 @@ import {AuthService} from './auth.service';
     providedIn: 'root'
 })
 export class ProductService {
-    productCollection: AngularFirestoreCollection<Product>;
-    productDoc: AngularFirestoreDocument<Product>;
-    products: Observable<Product[]>;
-    product: Observable<Product>;
     pageLimit = 10;
     lastDocSnapshot: QueryDocumentSnapshot<unknown>;
     pageFullyLoaded = false;
@@ -26,8 +22,6 @@ export class ProductService {
                 private authService: AuthService
     ) {
         console.log('product service created...');
-        this.productCollection = this.afs.collection('products', ref =>
-            ref.orderBy('productName', 'asc'));
     }
 
     /**
@@ -35,22 +29,27 @@ export class ProductService {
      */
     getProducts(): Observable<Product[]> {
         // Get Products with the ids
-        this.products = this.productCollection.snapshotChanges().pipe(
-            takeUntil(this.authService.getIsAuth$().pipe(filter(isAuth => isAuth === false))),
-            map(actions => {
-                console.log('-----------------------------------');
-                actions.forEach(act => console.log(act.payload.doc.data().productName + ' from cache=' + act.payload.doc.metadata.fromCache + ' type=' + act.payload.type));
-                console.log('-----------------------------------');
+        const products = this.afs
+            .collection('products', ref => ref.orderBy('productName', 'asc'))
+            .snapshotChanges().pipe(
+                takeUntil(this.authService.getIsAuth$().pipe(filter(isAuth => isAuth === false))),
+                map(actions => {
+                    console.log('-----------------------------------');
+                    actions.forEach(act => {
+                        const product = act.payload.doc.data() as Product;
+                        console.log(product.productName + ' from cache=' + act.payload.doc.metadata.fromCache + ' type=' + act.payload.type);
+                    });
+                    console.log('-----------------------------------');
 
-                return actions.map(act => {
-                    const data = act.payload.doc.data() as Product;
-                    data.id = act.payload.doc.id;
-                    return data;
-                });
-            })
-        );
+                    return actions.map(act => {
+                        const data = act.payload.doc.data() as Product;
+                        data.id = act.payload.doc.id;
+                        return data;
+                    });
+                })
+            );
 
-        return this.products;
+        return products;
     }
 
     /**
@@ -58,29 +57,31 @@ export class ProductService {
      * @param productId: string
      */
     getProduct(productId: string): Observable<Product> {
-        this.productDoc = this.afs.doc<Product>(`products/${productId}`);
-        this.product = this.productDoc.snapshotChanges().pipe(
-            takeUntil(this.authService.getIsAuth$().pipe(filter(isAuth => isAuth === false))),
-            map(action => {
-                if (action.payload.exists === false) {
-                    return null;
-                } else {
-                    const data = action.payload.data() as Product;
-                    data.id = action.payload.id;
-                    return data;
-                }
-            })
-        );
-        return this.product;
+        const product = this.afs
+            .doc<Product>(`products/${productId}`)
+            .snapshotChanges().pipe(
+                takeUntil(this.authService.getIsAuth$().pipe(filter(isAuth => isAuth === false))),
+                map(action => {
+                    if (action.payload.exists === false) {
+                        return null;
+                    } else {
+                        const data = action.payload.data() as Product;
+                        data.id = action.payload.id;
+                        return data;
+                    }
+                })
+            );
+        return product;
     }
 
     /**
      * Upload one new Product to Database
-     * @param product: Product
+     * @param newProduct: Product
      */
-    async createProduct(product: Product): Promise<DocumentReference> {
-        const data = JSON.parse(JSON.stringify(product));
-        return await this.productCollection.add(data);
+    async createProduct(newProduct: Product): Promise<DocumentReference> {
+        return this.afs
+            .collection('products')
+            .add({...newProduct});
     }
 
     /**
@@ -88,8 +89,8 @@ export class ProductService {
      * @param updatedProduct: Product
      */
     async updateProduct(updatedProduct: Product) {
-        this.productDoc = this.afs.doc(`products/${updatedProduct.id}`);
-        await this.productDoc.update(updatedProduct);
+        return this.afs.doc(`products/${updatedProduct.id}`)
+            .update(updatedProduct);
     }
 
     /**
@@ -97,8 +98,8 @@ export class ProductService {
      * @param toDeleteProduct: Product
      */
     async deleteProduct(toDeleteProduct: Product) {
-        this.productDoc = this.afs.doc(`products/${toDeleteProduct.id}`);
-        return await this.productDoc.delete();
+        return this.afs.doc(`products/${toDeleteProduct.id}`)
+            .delete();
     }
 
     /**
@@ -106,7 +107,7 @@ export class ProductService {
      * Used for Pagination
      */
     getLimitedProductsAfterStart(): Observable<Product[]> {
-        this.products = this.afs.collection('products', ref =>
+        const products = this.afs.collection('products', ref =>
             ref
                 .orderBy('productName', 'asc')
                 .limit(this.pageLimit)).snapshotChanges().pipe(
@@ -128,7 +129,7 @@ export class ProductService {
                 }
             )
         );
-        return this.products;
+        return products;
     }
 
     /**
@@ -136,7 +137,7 @@ export class ProductService {
      * Used for Pagination
      */
     getLimitedProductsAfterLastDoc(): Observable<Product[]> {
-        this.products = this.afs.collection('products', ref =>
+        const products = this.afs.collection('products', ref =>
             ref
                 .orderBy('productName', 'asc')
                 .limit(this.pageLimit)
@@ -162,7 +163,7 @@ export class ProductService {
                     }
                 )
             );
-        return this.products;
+        return products;
     }
 
     /**

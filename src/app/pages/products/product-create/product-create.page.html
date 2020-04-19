@@ -20,17 +20,19 @@
                     sizeMd="8"
                     offsetMd="2"
             >
-                <ion-button routerLink="/products">
-                    To Products
-                </ion-button>
-                <ion-button
-                        color="tertiary"
-                        *ngIf="isDetailed && product"
-                        [routerLink]="['/products', product.id, 'edit']"
-                >
-                    <ion-icon name="settings-outline" class="ion-margin-end"></ion-icon>
-                    Edit
-                </ion-button>
+                <section class="ion-margin-bottom">
+                    <ion-button routerLink="/products">
+                        Quay về các sản phẩm
+                    </ion-button>
+                    <ion-button
+                            *ngIf="isDetailed && product"
+                            color="tertiary"
+                            [routerLink]="['/products', product.id, 'edit']"
+                    >
+                        <ion-icon name="settings-outline" class="ion-margin-end"></ion-icon>
+                        Sửa
+                    </ion-button>
+                </section>
 
                 <!--        Reactive Form        -->
                 <form
@@ -40,7 +42,8 @@
                     (keydown.enter)="!submitButton.disabled ? submitHandler(submitButton) : null"
                 >
                     <ion-item-divider>
-                        <ion-label *ngIf="isDetailed">Please fill in information for the product</ion-label>
+                        <ion-label *ngIf="!isDetailed">Mời điền thông tin sản phẩm</ion-label>
+                        <ion-label *ngIf="isDetailed">Thông tin sản phẩm</ion-label>
                     </ion-item-divider>
 
                     <!--    Product Name    -->

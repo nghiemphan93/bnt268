@@ -35,9 +35,7 @@ export class OrderService {
      */
     getOrders(userId: string): Observable<Order[]> {
         this.orders = this.afs
-            .collection<User>('users')
-            .doc<User>(userId)
-            .collection<Order>('orders')
+            .collection<Order>(`users/${userId}/orders`, ref => ref.orderBy('createdAt', 'desc'))
             .snapshotChanges().pipe(
                 takeUntil(this.authService.getIsAuth$().pipe(filter(isAuth => isAuth === false))),
                 map(actions => actions.map(act => {
@@ -46,7 +44,6 @@ export class OrderService {
                     return data;
                 }))
             );
-
         return this.orders;
     }
 
@@ -55,7 +52,8 @@ export class OrderService {
      * @param orderId: string
      */
     getOrder(userId: string, orderId: string): Observable<Order> {
-        this.orderDoc = this.afs.doc<Order>(`users/${userId}/orders/${orderId}`);
+        this.orderDoc = this.afs
+            .doc<Order>(`users/${userId}/orders/${orderId}`);
         this.order = this.orderDoc.snapshotChanges().pipe(
             takeUntil(this.authService.getIsAuth$().pipe(filter(isAuth => isAuth === false))),
             map(action => {

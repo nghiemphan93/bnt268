@@ -33,7 +33,7 @@ export class OrderItemService {
      */
     getOrderItems(userId: string, orderId: string): Observable<OrderItem[]> {
         const orderItems = this.afs
-            .collection(`users/${userId}/orders/${orderId}/orderItems`, ref => ref.orderBy('createdAt'))
+            .collection(`users/${userId}/orders/${orderId}/orderItems`, ref => ref.orderBy('createdAt', 'desc'))
             .snapshotChanges().pipe(
                 takeUntil(this.authService.getIsAuth$().pipe(filter(isAuth => isAuth === false))),
                 map(actions => {
@@ -48,27 +48,6 @@ export class OrderItemService {
                     });
                 })
             );
-        // const orderItems = this.afs
-        //     .collection<User>('users')
-        //     .doc<User>(userId)
-        //     .collection<Order>('orders')
-        //     .doc<Order>(orderId)
-        //     .collection<OrderItem>('orderItems', ref => ref.orderBy('createdAt'))
-        //     .snapshotChanges().pipe(
-        //         takeUntil(this.authService.getIsAuth$().pipe(filter(isAuth => isAuth === false))),
-        //         map(actions => {
-        //             console.log('-----------------------------------');
-        //             actions.forEach(act => console.log(act.payload.doc.data().orderItemName + ' from cache=' + act.payload.doc.metadata.fromCache + ' type=' + act.payload.doc.metadata.fromCache));
-        //             console.log('-----------------------------------');
-        //
-        //             return actions.map(act => {
-        //                 const data = act.payload.doc.data() as OrderItem;
-        //                 data.id = act.payload.doc.id;
-        //                 return data;
-        //             });
-        //         })
-        //     );
-
         return orderItems;
     }
 
@@ -92,25 +71,6 @@ export class OrderItemService {
                     }
                 })
             );
-        // const orderItem = this.afs
-        //     .collection<User>('users')
-        //     .doc<User>(userId)
-        //     .collection<Order>('orders')
-        //     .doc<Order>(orderId)
-        //     .collection<OrderItem>('orderItems', ref => ref.orderBy('createdAt'))
-        //     .doc<OrderItem>(orderItemId)
-        //     .snapshotChanges().pipe(
-        //         takeUntil(this.authService.getIsAuth$().pipe(filter(isAuth => isAuth === false))),
-        //         map(action => {
-        //             if (action.payload.exists === false) {
-        //                 return null;
-        //             } else {
-        //                 const data = action.payload.data() as OrderItem;
-        //                 data.id = action.payload.id;
-        //                 return data;
-        //             }
-        //         })
-        //     );
         return orderItem;
     }
 
@@ -123,13 +83,6 @@ export class OrderItemService {
         return await this.afs
             .collection(`users/${userId}/orders/${orderId}/orderItems`)
             .add({...orderItem});
-        // return await this.afs
-        //     .collection<User>('users')
-        //     .doc<User>(userId)
-        //     .collection<Order>('orders')
-        //     .doc<Order>(orderId)
-        //     .collection<OrderItem>('orderItems')
-        //     .add({...orderItem});
     }
 
     /**
@@ -140,15 +93,7 @@ export class OrderItemService {
     async updateOrderItem(userId: string, orderId: string, toUpdateOrderItem: OrderItem) {
         return await this.afs
             .doc(`users/${userId}/orders/${orderId}/orderItems/${toUpdateOrderItem.id}`)
-            .update({...toUpdateOrderItem});
-        // return await this.afs
-        //     .collection<User>('users')
-        //     .doc<User>(userId)
-        //     .collection<Order>('orders')
-        //     .doc<Order>(orderId)
-        //     .collection<OrderItem>('orderItems')
-        //     .doc<OrderItem>(toUpdateOrderItem.id)
-        //     .update({...toUpdateOrderItem});
+            .update(toUpdateOrderItem);
     }
 
     /**
@@ -160,14 +105,6 @@ export class OrderItemService {
         return await this.afs
             .doc(`users/${userId}/orders/${orderId}/orderItems/${toDeleteOrderItem.id}`)
             .delete();
-        // return await this.afs
-        //     .collection<User>('users')
-        //     .doc<User>(userId)
-        //     .collection<Order>('orders')
-        //     .doc<Order>(orderId)
-        //     .collection<OrderItem>('orderItems')
-        //     .doc<OrderItem>(toDeleteOrderItem.id)
-        //     .delete();
     }
 
 

@@ -27,9 +27,9 @@
                     </ion-button>
 
                     <ion-button
-                            *ngIf="isDetailed && !(currentUser$ | async)?.customClaims?.WORKER"
+                            *ngIf="isDetailed && orderItem && !(currentUser$ | async)?.customClaims?.WORKER"
                             color="tertiary"
-                            [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', orderItem.id, 'edit']"
+                            [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', orderItem?.id, 'edit']"
                     >
                         <ion-icon name="settings-outline"></ion-icon>
                         Sửa
@@ -126,6 +126,7 @@
                                     *ngIf="!isDetailed"
                                     interface="popover"
                                     formControlName="orderItemKind"
+                                    slot="end"
                             >
                                 <ion-select-option
                                         *ngFor="let kind of kinds"
