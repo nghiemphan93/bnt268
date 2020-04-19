@@ -74,9 +74,10 @@ export class OrderItemsPage implements OnInit, OnDestroy {
     }
 
     ionViewDidEnter() {
-        if (this.isDesktop) {
-            this.orderItemsDesktop$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
-        }
+        this.orderItemsDesktop$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
+        // if (this.isDesktop) {
+        //     this.orderItemsDesktop$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
+        // }
     }
 
 

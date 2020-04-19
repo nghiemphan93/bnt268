@@ -46,11 +46,12 @@ export class ProductsPage implements OnInit, OnDestroy {
     }
 
     ionViewDidEnter() {
-        if (this.isDesktop) {
-            this.productsDesktop$ = this.productCacheService.getProductsCache$();
-        } else {
-            this.productsMobile$.push(this.productService.getLimitedProductsAfterStart());
-        }
+        this.productsDesktop$ = this.productCacheService.getProductsCache$();
+        // if (this.isDesktop) {
+        //     this.productsDesktop$ = this.productCacheService.getProductsCache$();
+        // } else {
+        //     this.productsMobile$.push(this.productService.getLimitedProductsAfterStart());
+        // }
     }
 
     ngOnDestroy() {
