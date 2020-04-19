@@ -6,6 +6,7 @@ import {AngularFirestore} from '@angular/fire/firestore';
 import {ToastService} from '../../services/toast.service';
 import {IonButton} from '@ionic/angular';
 import {LoadingService} from '../../services/loading.service';
+import {User} from 'firebase';
 
 @Component({
     selector: 'app-signin',
@@ -54,10 +55,23 @@ export class SigninPage implements OnInit {
         try {
             const userCredential = await this.authService.signIn(email, password);
             this.validationForm.reset();
-            await this.router.navigate(['products']);
-            await this.toastService.presentToastSuccess('Sign in successfully');
-            await this.loadingService.dismissLoading();
-            submitButton.disabled = false;
+            this.authService.getCurrentUser$().subscribe(async currentUser => {
+                if (currentUser) {
+                    if (currentUser.customClaims.WORKER === true) {
+                        await this.router.navigate(['users', currentUser.uid, 'orders']);
+                    } else {
+                        console.log(currentUser);
+                        await this.router.navigate(['users']);
+                    }
+                    await this.toastService.presentToastSuccess('Sign in successfully');
+                    await this.loadingService.dismissLoading();
+                    submitButton.disabled = false;
+                }
+            });
+            // await this.router.navigate(['products']);
+            // await this.toastService.presentToastSuccess('Sign in successfully');
+            // await this.loadingService.dismissLoading();
+            // submitButton.disabled = false;
         } catch (e) {
             console.log(e);
             this.error = e.message;

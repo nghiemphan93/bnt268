@@ -15,7 +15,7 @@ import {UserCacheService} from './services/user-cache.service';
 export class AppComponent implements OnInit {
     public selectedIndex = 0;
     isAuth$ = this.authService.getIsAuth$();
-    user$ = this.authService.getCurrentUser$();
+    currentUser$ = this.authService.getCurrentUser$();
 
     appPages = [
         {

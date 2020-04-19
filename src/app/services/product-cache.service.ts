@@ -28,16 +28,12 @@ export class ProductCacheService {
             return this.productsSubject.asObservable();
         } else {
             console.log('make HTTP call to get Products');
-            try {
-                this.productService.getProducts()
-                    .subscribe(productsFromServer => {
-                        this.productsCache = productsFromServer;
-                        this.productsSubject.next(this.productsCache);
-                    });
-                return this.productsSubject.asObservable();
-            } catch (e) {
-                console.log(e);
-            }
+            this.productService.getProducts()
+                .subscribe(productsFromServer => {
+                    this.productsCache = productsFromServer;
+                    this.productsSubject.next(this.productsCache);
+                });
+            return this.productsSubject.asObservable();
         }
     }
 

@@ -151,6 +151,7 @@ export class OrderCreatePage implements OnInit, OnDestroy {
         } catch (e) {
             console.log(e);
             await this.loadingService.dismissLoading();
+            await this.toastService.presentToastError(e.message);
             submitButton.disabled = false;
         }
     }

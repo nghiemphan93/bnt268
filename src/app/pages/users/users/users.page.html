@@ -11,9 +11,12 @@
 <ion-content *ngIf="isDesktop">
     <section class="container">
         <ion-item-group class="ion-margin">
-            <ion-button routerLink="/users/create">
+            <ion-button
+                    *ngIf="(isAuth$ | async) && !(user$ | async).customClaims.WORKER"
+                    routerLink="/users/create"
+            >
                 <ion-icon name="add-circle-outline" class="ion-margin-end"></ion-icon>
-                <p>Create New User</p>
+                <p>Tạo người dùng mới</p>
             </ion-button>
         </ion-item-group>
 
@@ -33,9 +36,9 @@
                     <ion-button
                             size="small"
                             color="dark"
-                            [routerLink]="['/users', row.uid]"
+                            [routerLink]="['/users', row?.uid]"
                     >
-                        {{ row.email }}
+                        {{ row?.email }}
                     </ion-button>
                 </ng-template>
             </ngx-datatable-column>
@@ -60,7 +63,7 @@
                     <ion-button
                             size="small"
                             color="dark"
-                            [routerLink]="['/users', row.uid, 'orders']"
+                            [routerLink]="['/users', row?.uid, 'orders']"
                     >
                         Đơn hàng
                     </ion-button>
@@ -76,8 +79,8 @@
                     <ion-button
                             size="small"
                             color="tertiary"
-                            [routerLink]="['/users', row.uid, 'edit']"
-                            [disabled]="row.customClaims.DEV === true && (currentUser$ | async)?.customClaims?.DEV === undefined"
+                            [routerLink]="['/users', row?.uid, 'edit']"
+                            [disabled]="row?.customClaims?.DEV === true && (currentUser$ | async)?.customClaims?.DEV === undefined"
                     >
                         Edit
                     </ion-button>
@@ -86,6 +89,7 @@
 
             <!--    Delete Button    -->
             <ngx-datatable-column
+                    *ngIf="(isAuth$ | async) && (user$ | async)?.customClaims?.DEV"
                     name="Delete"
                     [sortable]="false"
             >
@@ -94,7 +98,6 @@
                             size="small"
                             (click)="alertService.presentDeleteConfirm(row)"
                             color="danger"
-                            [disabled]="row.customClaims.DEV === true && (currentUser$ | async)?.customClaims?.DEV === undefined"
                     >
                         <ion-icon name="trash-bin-outline"></ion-icon>
                         Delete

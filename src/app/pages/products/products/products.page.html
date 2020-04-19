@@ -15,10 +15,10 @@
         <ion-item-group class="ion-margin">
             <ion-button
                     routerLink="/products/create"
-                    *ngIf="(isAuth$ | async) && !(user$ | async).customClaims.WORKER"
+                    *ngIf="(isAuth$ | async) && !(user$ | async)?.customClaims?.WORKER"
             >
                 <ion-icon name="add-circle-outline" class="ion-margin-end"></ion-icon>
-                <p>Create New Product</p>
+                <p>Tạo sản phẩm mới</p>
             </ion-button>
         </ion-item-group>
 
@@ -34,13 +34,22 @@
         >
             <!--    Product Name    -->
             <ngx-datatable-column name="Tên Sản Phẩm" prop="productName">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <ion-badge color="secondary">
+                        {{ row?.productName }}
+                    </ion-badge>
+                </ng-template>
             </ngx-datatable-column>
 
             <!--    Product Price    -->
             <ngx-datatable-column name="Giá" prop="productPrice">
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    <!--                    {{ row.productPrice | currency:'VND':'symbol':'4.0' }} VND-->
-                    {{ row.productPrice | number:'1.0-2' }} đ
+                    <ion-badge
+                            *ngIf="row?.productPrice !== 0"
+                            color="tertiary"
+                    >
+                        {{ row?.productPrice | number:'1.0-2' }} đ
+                    </ion-badge>
                 </ng-template>
             </ngx-datatable-column>
 
@@ -53,7 +62,7 @@
                     <ion-button
                             size="small"
                             color="dark"
-                            [routerLink]="['/products', row.id]"
+                            [routerLink]="['/products', row?.id]"
                     >
                         Chi tiết
                     </ion-button>
@@ -64,7 +73,7 @@
             <ngx-datatable-column
                     name="Sửa"
                     [sortable]="false"
-                    *ngIf="(isAuth$ | async) && !(user$ | async).customClaims.WORKER"
+                    *ngIf="(isAuth$ | async) && !(user$ | async)?.customClaims?.WORKER"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <ion-button
@@ -81,7 +90,7 @@
             <ngx-datatable-column
                     name="Xóa"
                     [sortable]="false"
-                    *ngIf="(isAuth$ | async) && !(user$ | async).customClaims.WORKER"
+                    *ngIf="(isAuth$ | async) && (user$ | async)?.customClaims?.DEV"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <ion-button

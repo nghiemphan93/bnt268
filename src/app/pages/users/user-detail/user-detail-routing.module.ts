@@ -2,11 +2,12 @@ import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 
 import {UserDetailPage} from './user-detail.page';
+import {AngularFireAuthGuard} from '@angular/fire/auth-guard';
 
 const routes: Routes = [
     {
         path: '',
-        component: UserDetailPage
+        component: UserDetailPage,
     },
     {
         path: 'orders',

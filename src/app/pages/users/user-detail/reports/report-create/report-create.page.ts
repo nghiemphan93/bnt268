@@ -45,8 +45,6 @@ export class ReportCreatePage implements OnInit, OnDestroy {
     isDesktop: boolean;
     isMobile: boolean;
 
-    isSilverTableReady = false;
-
     constructor(private orderService: OrderService,
                 private orderItemService: OrderItemService,
                 private productService: ProductService,
@@ -85,6 +83,7 @@ export class ReportCreatePage implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        console.log('bye bye ReportPage...');
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
@@ -126,6 +125,19 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         lastRow.totalPrice = totalPrice;
         productsReportData.push(lastRow);
         this.productsReportData = [...productsReportData];
+
+        // Emit event to resize columns width
+        this.configProductsReportTableSize();
+        this.productsTable.headerComponent.select.emit();
+    }
+
+    configProductsReportTableSize() {
+        const totalTableWidth = this.productsTable._innerWidth;
+        const columnPortions = [1.5, 1, 1, 3];
+        const totalPortions = columnPortions.reduce((previousValue, currentValue) => previousValue + currentValue);
+        for (let i = 0; i < this.silverTable._internalColumns.length; i++) {
+            this.productsTable._internalColumns[i].width = (totalTableWidth / totalPortions) * columnPortions[i];
+        }
     }
 
     prepareSilverData() {
@@ -198,12 +210,9 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         this.silverReportData = [...silverReportData];
 
 
-        // this.configSilverReportTableSize();
-        // console.log(this.silverTable);
-        this.silverTable.resize.emit();
-    }
-
-    ionViewDidEnter() {
+        // Emit event to resize columns width
+        this.configSilverReportTableSize();
+        this.silverTable.headerComponent.select.emit();
     }
 
     configSilverReportTableSize() {
@@ -213,13 +222,5 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         for (let i = 0; i < this.silverTable._internalColumns.length; i++) {
             this.silverTable._internalColumns[i].width = (totalTableWidth / totalPortions) * columnPortions[i];
         }
-        this.isSilverTableReady = true;
-    }
-
-    testResize() {
-        console.log('resizing...');
-
-        this.configSilverReportTableSize();
-        console.log(this.silverTable);
     }
 }

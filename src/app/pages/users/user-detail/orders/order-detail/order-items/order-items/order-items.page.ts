@@ -18,6 +18,7 @@ import {Report} from '../../../../../../../models/report';
 import {Kind} from '../../../../../../../models/kind.enum';
 import {Product} from '../../../../../../../models/product';
 import {ReportService} from '../../../../../../../services/report.service';
+import {Status} from '../../../../../../../models/status.enum';
 
 @Component({
     selector: 'app-order-items',
@@ -47,6 +48,8 @@ export class OrderItemsPage implements OnInit, OnDestroy {
     status = this.statusService.getStatuses();
     GIAO = Kind.GIAO;
     NHAN = Kind.NHẬN;
+    PENDING = Status.PENDING;
+    DONE = Status.DONE;
 
     constructor(
         private orderService: OrderService,
@@ -154,77 +157,84 @@ export class OrderItemsPage implements OnInit, OnDestroy {
 
     prepareReportHandler() {
         this.subscription.add(this.orderItemsDesktop$.subscribe(async orderItemsFromServer => {
-            const newReport = new Report();
-            const productQuantityMapper = new Map<string, number>();
-            const products: Product[] = [];
-            orderItemsFromServer.forEach(orderItem => {
-                switch (orderItem.orderItemKind) {
-                    case Kind.GIAO:
-                        newReport.giveWeights.push(orderItem.orderItemWeight);
-                        break;
-                    case Kind.NHẬN:
-                        newReport.receiveWeights.push(orderItem.orderItemWeight);
-
-                        for (let i = 0; i < orderItem.orderItemProducts.length; i++) {
-                            const product = orderItem.orderItemProducts[i];
-                            const productId = orderItem.orderItemProducts[i].id;
-                            const productQuantity = orderItem.orderItemQuantities[i];
-
-                            if (product.productName.toLowerCase() === 'bạc dát') {
-                                newReport.totalReceiveBacDatWeight += orderItem.orderItemWeight;
-                                newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
-                            }
-
-                            if (product.productName.toLowerCase() === 'bạc tồn') {
-                                newReport.totalReceiveBacTonWeight += orderItem.orderItemWeight;
-                                newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
-                            }
-
-                            if (productQuantity > 0) {
-                                if (productQuantityMapper.has(productId)) {
-                                    const newTotalQuantity = productQuantityMapper.get(productId) + productQuantity;
-                                    productQuantityMapper.set(productId, newTotalQuantity);
-                                } else {
-                                    productQuantityMapper.set(productId, productQuantity);
-                                    products.push(product);
-                                }
-                            }
-
-                        }
-                        break;
-                }
-            });
-
-            products.forEach(product => {
-                // console.log(`${product.productName} - ${productQuantityMapper.get(product.id)}`);
-                newReport.products.push(product);
-                newReport.quantities.push(productQuantityMapper.get(product.id));
-                newReport.totalPricePerProduct.push(product.productPrice * productQuantityMapper.get(product.id));
-            });
-
-            newReport.totalPrice = newReport.totalPricePerProduct.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
-                return previousValue + currentValue;
-            });
-
-            newReport.totalGiveWeight = newReport.giveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
-                return previousValue + currentValue;
-            });
-
-            newReport.totalReceiveWeight = Number(newReport.receiveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
-                return previousValue + currentValue;
-            }).toFixed(2));
-
-            newReport.totalReceiveWeightAdjusted = Number((newReport.totalReceiveWeight * 1.05).toFixed(2));
-
-            newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon = newReport.totalReceiveWeightAdjusted + newReport.totalReceiveBacDatWeight + newReport.totalReceiveBacTonWeight;
-
-            newReport.totalWeightDifference = Number((newReport.totalGiveWeight - newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon).toFixed(2));
-            newReport.createdAt = new Date();
-
-            console.log(newReport);
-
             try {
-                await this.reportService.createReportByOrderId(this.userId, this.orderId, newReport);
+                const newReport = new Report();
+                const productQuantityMapper = new Map<string, number>();
+                const products: Product[] = [];
+                orderItemsFromServer.forEach(orderItem => {
+                    switch (orderItem.orderItemKind) {
+                        case Kind.GIAO:
+                            newReport.giveWeights.push(orderItem.orderItemWeight);
+                            break;
+                        case Kind.NHẬN:
+                            newReport.receiveWeights.push(orderItem.orderItemWeight);
+
+                            for (let i = 0; i < orderItem.orderItemProducts.length; i++) {
+                                const product = orderItem.orderItemProducts[i];
+                                const productId = orderItem.orderItemProducts[i].id;
+                                const productQuantity = orderItem.orderItemQuantities[i];
+
+                                if (product.productName.toLowerCase() === 'bạc dát') {
+                                    newReport.totalReceiveBacDatWeight += orderItem.orderItemWeight;
+                                    newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
+                                }
+
+                                if (product.productName.toLowerCase() === 'bạc tồn') {
+                                    newReport.totalReceiveBacTonWeight += orderItem.orderItemWeight;
+                                    newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
+                                }
+
+                                if (productQuantity > 0) {
+                                    if (productQuantityMapper.has(productId)) {
+                                        const newTotalQuantity = productQuantityMapper.get(productId) + productQuantity;
+                                        productQuantityMapper.set(productId, newTotalQuantity);
+                                    } else {
+                                        productQuantityMapper.set(productId, productQuantity);
+                                        products.push(product);
+                                    }
+                                }
+
+                            }
+                            break;
+                    }
+                });
+
+                products.forEach(product => {
+                    // console.log(`${product.productName} - ${productQuantityMapper.get(product.id)}`);
+                    newReport.products.push(product);
+                    newReport.quantities.push(productQuantityMapper.get(product.id));
+                    newReport.totalPricePerProduct.push(product.productPrice * productQuantityMapper.get(product.id));
+                });
+
+                newReport.totalPrice = newReport.totalPricePerProduct.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                    return previousValue + currentValue;
+                });
+
+                newReport.totalGiveWeight = newReport.giveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                    return previousValue + currentValue;
+                });
+
+                newReport.totalReceiveWeight = Number(newReport.receiveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                    return previousValue + currentValue;
+                }).toFixed(2));
+
+                newReport.totalReceiveWeightAdjusted = Number((newReport.totalReceiveWeight * 1.05).toFixed(2));
+
+                newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon = newReport.totalReceiveWeightAdjusted + newReport.totalReceiveBacDatWeight + newReport.totalReceiveBacTonWeight;
+
+                newReport.totalWeightDifference = Number((newReport.totalGiveWeight - newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon).toFixed(2));
+                newReport.createdAt = new Date();
+
+                console.log(newReport);
+
+
+                this.order$.subscribe(async orderFromServer => {
+                    orderFromServer.orderStatus = Status.DONE;
+                    await this.orderService.updateOrder(this.userId, orderFromServer);
+                    await this.toastService.presentToastSuccess(`change Status of Order ${orderFromServer.orderName} to DONE successfully`);
+                    await this.reportService.createReportByOrderId(this.userId, this.orderId, newReport);
+                    await this.toastService.presentToastSuccess(`created Report for Order ${orderFromServer.orderName} successfully`);
+                });
             } catch (e) {
                 console.log(e);
                 await this.toastService.presentToastError(e.message);

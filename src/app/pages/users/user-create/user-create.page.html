@@ -20,18 +20,23 @@
                     sizeMd="8"
                     offsetMd="2"
             >
-                <ion-button routerLink="/users">
-                    To Users
+                <ion-button
+                        *ngIf="(currentUser$ | async)?.customClaims.WORKER !== true"
+                        routerLink="/users"
+                        color="dark"
+                >
+                    <ion-icon name="arrow-back-outline"></ion-icon>
+                    Quay về danh sách nhân viên
                 </ion-button>
                 <ion-button
                         color="tertiary"
-                        *ngIf="isDetailed && user"
+                        *ngIf="isDetailed && user && (currentUser$ | async)?.customClaims.WORKER !== true"
                         [routerLink]="['/users', user.uid, 'edit']"
                         [disabled]="user.customClaims.DEV === true && (currentUser$ | async)?.customClaims?.DEV === undefined"
 
                 >
                     <ion-icon name="settings-outline" class="ion-margin-end"></ion-icon>
-                    Edit
+                    Sửa
                 </ion-button>
 
                 <!--        Reactive Form        -->
@@ -41,7 +46,8 @@
                         (keydown.enter)="validationForm.valid ? submitHandler(submitButton) : null"
                 >
                     <ion-item-divider>
-                        <ion-label *ngIf="isDetailed">Please fill in information for the user</ion-label>
+                        <ion-label *ngIf="!isDetailed">Mời điền thông tin cho nhân viên</ion-label>
+                        <ion-label *ngIf="isDetailed">Thông tin của nhân viên</ion-label>
                     </ion-item-divider>
 
                     <!--    User Name    -->
@@ -134,8 +140,7 @@
                 <ion-button
                         color="tertiary"
                         [routerLink]="['/users', userId, 'orders']"
-                        *ngIf="((currentUser$ | async)?.customClaims?.DEV === true || (currentUser$ | async)?.customClaims?.ADMIN === true) && (user?.customClaims?.WORKER === true)"
-
+                        *ngIf="(user?.customClaims?.WORKER === true)"
                 >
                     <ion-icon name="pricetags-outline" class="ion-margin-end"></ion-icon>
                     Các đơn hàng

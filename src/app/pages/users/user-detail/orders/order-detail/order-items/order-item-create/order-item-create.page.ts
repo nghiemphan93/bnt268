@@ -41,6 +41,8 @@ export class OrderItemCreatePage implements OnInit, OnDestroy {
     user$: Observable<User | any>;
     orderItemId: string;
     kinds = this.kindService.getKinds();
+    GIAO = Kind.GIAO;
+    NHẬN = Kind.NHẬN;
 
     constructor(private orderService: OrderService,
                 private orderItemService: OrderItemService,
@@ -231,7 +233,6 @@ export class OrderItemCreatePage implements OnInit, OnDestroy {
         submitButton.disabled = true;
         await this.loadingService.presentLoading();
         await this.transferDataFromFormToObject();
-        console.log(this.orderItem);
         try {
             if (this.isCreated) {
                 this.orderItem.createdAt = new Date();

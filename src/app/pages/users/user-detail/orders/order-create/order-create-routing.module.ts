@@ -1,17 +1,20 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {Routes, RouterModule} from '@angular/router';
 
-import { OrderCreatePage } from './order-create.page';
+import {OrderCreatePage} from './order-create.page';
+import {devOrAdminOnly} from '../../../../../app-routing.module';
+import {AngularFireAuthGuard} from '@angular/fire/auth-guard';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: OrderCreatePage
-  }
+    {
+        path: '',
+        component: OrderCreatePage,
+    }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule],
 })
-export class OrderCreatePageRoutingModule {}
+export class OrderCreatePageRoutingModule {
+}

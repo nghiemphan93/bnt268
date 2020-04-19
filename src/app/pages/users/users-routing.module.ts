@@ -1,10 +1,12 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
+import {AngularFireAuthGuard} from '@angular/fire/auth-guard';
+import {devOrAdminOnly} from '../../app-routing.module';
 
 const routes: Routes = [
     {
         path: '',
-        loadChildren: () => import('./users/users.module').then(m => m.UsersPageModule)
+        loadChildren: () => import('./users/users.module').then(m => m.UsersPageModule),
     },
     {
         path: 'create',
@@ -12,7 +14,7 @@ const routes: Routes = [
     },
     {
         path: ':userId',
-        loadChildren: () => import('./user-detail/user-detail.module').then(m => m.UserDetailPageModule)
+        loadChildren: () => import('./user-detail/user-detail.module').then(m => m.UserDetailPageModule),
     },
     {
         path: ':userId/edit',

@@ -51,7 +51,7 @@ export class AuthService {
             .toPromise();
     }
 
-    getCurrentUser$(): Observable<User> {
+    getCurrentUser$(): Observable<User | any> {
         return this.user$;
     }
 
