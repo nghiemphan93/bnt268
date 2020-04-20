@@ -16,7 +16,7 @@
                     routerLink="/users/create"
             >
                 <ion-icon name="add-circle-outline" class="ion-margin-end"></ion-icon>
-                <p>Tạo người dùng mới</p>
+                Nhân viên mới
             </ion-button>
         </ion-item-group>
 
@@ -61,6 +61,7 @@
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <ion-button
+                            *ngIf="row?.customClaims?.WORKER"
                             size="small"
                             color="dark"
                             [routerLink]="['/users', row?.uid, 'orders']"
@@ -127,7 +128,7 @@
                 size="small"
         >
             <ion-icon name="add-circle-outline" class="ion-margin-end"></ion-icon>
-            Tạo người dùng mới
+            Nhân viên mới
         </ion-button>
     </ion-item-group>
 
@@ -188,7 +189,7 @@
                                     <ion-label>Chức vụ:</ion-label>
                                     <ion-badge
                                             slot="end"
-                                            color="warning"
+                                            color="medium"
                                     >
                                         {{ this.claimService.claimBooleanToEnum(user) }}
                                     </ion-badge>
@@ -198,8 +199,9 @@
                                 <ion-item>
                                     <ion-label>Các đơn hàng:</ion-label>
                                     <ion-button
+                                            *ngIf="user?.customClaims?.WORKER"
                                             slot="end"
-                                            color="dark"
+                                            color="warning"
                                             [routerLink]="['/users', user?.uid, 'orders']"
                                     >
                                         Đơn hàng

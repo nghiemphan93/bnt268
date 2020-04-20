@@ -28,12 +28,12 @@
                     <ion-icon name="arrow-back-outline"></ion-icon>
                     Quay về danh sách nhân viên
                 </ion-button>
+
                 <ion-button
                         color="tertiary"
                         *ngIf="isDetailed && user && (currentUser$ | async)?.customClaims.WORKER !== true"
                         [routerLink]="['/users', user.uid, 'edit']"
                         [disabled]="user?.customClaims?.DEV === true && (currentUser$ | async)?.customClaims?.DEV === undefined"
-
                 >
                     <ion-icon name="settings-outline" class="ion-margin-end"></ion-icon>
                     Sửa

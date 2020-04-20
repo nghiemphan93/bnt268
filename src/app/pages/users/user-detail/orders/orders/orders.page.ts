@@ -23,7 +23,7 @@ import {PlatformService} from '../../../../../services/platform.service';
 export class OrdersPage implements OnInit, OnDestroy {
     subscription = new Subscription();
     ordersDesktop$: Observable<Order[]>;
-    ordersMobile$: Observable<Order[]>[] = [];
+    ordersMobile$: Observable<Order[]>;
     orders: Order[] = [];
     tableStyle = 'material';
     userId: string;
@@ -58,7 +58,7 @@ export class OrdersPage implements OnInit, OnDestroy {
 
     ionViewDidEnter() {
         if (this.platformService.isMobile) {
-            // TODO
+            this.ordersMobile$ = this.orderCacheService.getOrdersCache$ByUserId(this.userId);
         } else {
             this.ordersDesktop$ = this.orderCacheService.getOrdersCache$ByUserId(this.userId);
         }
