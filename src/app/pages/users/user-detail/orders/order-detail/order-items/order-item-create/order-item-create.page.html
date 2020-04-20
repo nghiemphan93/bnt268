@@ -185,6 +185,7 @@
                                         [formControl]="orderItemProducts?.controls[i]"
                                         slot="end"
                                         (ionChange)="bacDatHandler(i)"
+                                        #productSelectElements
                                 >
                                     <ion-select-option
                                             *ngFor="let product of products$ | async"

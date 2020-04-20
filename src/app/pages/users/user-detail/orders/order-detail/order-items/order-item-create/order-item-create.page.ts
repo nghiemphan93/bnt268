@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {OrderService} from '../../../../../../../services/order.service';
 import {OrderItemService} from '../../../../../../../services/order-item.service';
 import {ProductService} from '../../../../../../../services/product.service';
@@ -16,13 +16,15 @@ import {UserService} from '../../../../../../../services/user.service';
 import {IonButton, IonSelect} from '@ionic/angular';
 import {Kind} from '../../../../../../../models/kind.enum';
 import {KindService} from '../../../../../../../services/kind.service';
+import {element} from 'protractor';
+import {log} from 'util';
 
 @Component({
     selector: 'app-order-item-create',
     templateUrl: './order-item-create.page.html',
     styleUrls: ['./order-item-create.page.scss'],
 })
-export class OrderItemCreatePage implements OnInit, OnDestroy {
+export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
     subscription = new Subscription();
     orderItem: OrderItem;
     validationForm: FormGroup;
@@ -43,6 +45,8 @@ export class OrderItemCreatePage implements OnInit, OnDestroy {
     kinds = this.kindService.getKinds();
     GIAO = Kind.GIAO;
     NHẬN = Kind.NHẬN;
+    @ViewChildren('productSelectElements') productsIonSelectQuery: QueryList<IonSelect>;
+    productsIonSelects: IonSelect[];
 
     constructor(private orderService: OrderService,
                 private orderItemService: OrderItemService,
@@ -192,6 +196,23 @@ export class OrderItemCreatePage implements OnInit, OnDestroy {
         }
     }
 
+    ngAfterViewInit(): void {
+        this.productsIonSelectQuery.changes.subscribe(el => {
+            const ionSelects: IonSelect[] = el._results;
+            this.productsIonSelects = ionSelects;
+            console.log(ionSelects);
+            ionSelects.forEach(async ionSelect => {
+                // if (ionSelect.value) {
+                //     ionSelect.selectedText = ionSelect.value.productName;
+                // }
+                console.log(ionSelect);
+                // await ionSelect.open();
+                // await ionSelect.ionCancel;
+            });
+        });
+    }
+
+
     /**
      * Transfer data from Reactive From to Order Item Object
      */
@@ -268,6 +289,7 @@ export class OrderItemCreatePage implements OnInit, OnDestroy {
     }
 
     bacDatHandler(productIndex: number) {
+        console.log(this.productsIonSelects[productIndex]);
         const selectedProduct: Product = this.validationForm.value.orderItemProducts[productIndex];
         const selectedQuantity: number = this.validationForm.value.orderItemQuantities[productIndex];
         if (selectedProduct.productName.toLowerCase() === 'bạc dát' || selectedProduct.productName.toLowerCase() === 'bạc tồn') {
