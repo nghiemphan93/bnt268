@@ -81,7 +81,7 @@
                     <ion-button
                             size="small"
                             color="dark"
-                            [routerLink]="['/products', row.id, 'edit']"
+                            [routerLink]="['/products', row?.id, 'edit']"
                     >
                         Sửa
                     </ion-button>
@@ -109,7 +109,7 @@
         <!--    </ng-container>-->
 
         <ion-col
-                *ngIf="table.rowCount === 0"
+                *ngIf="table?.rowCount === 0"
                 size="6"
                 offset="5"
         >
@@ -121,7 +121,7 @@
 
 <!-- Cards Mobile -->
 <ion-content
-        *ngIf="this.platformService.isMobile"
+        *ngIf="this.platformService.isMobile && (productsMobile$ | async)"
 >
     <ion-item-group class="ion-margin-start ion-margin-top">
         <ion-button
@@ -154,7 +154,7 @@
                                 <ion-button
                                         size="small"
                                         color="dark"
-                                        [routerLink]="['/products', product.id]"
+                                        [routerLink]="['/products', product?.id]"
                                         class="ion-text-wrap"
                                 >
                                     <ion-icon name="pricetag-outline" class="ion-margin-end"></ion-icon>
@@ -182,7 +182,7 @@
                                             slot="end"
                                             color="tertiary"
                                     >
-                                        {{ product.productPrice | number:'1.0-2' }} đ
+                                        {{ product?.productPrice | number:'1.0-2' }} đ
                                     </ion-badge>
                                 </ion-item>
                             </ion-item-group>
@@ -193,7 +193,7 @@
                                 <ion-item>
                                     <ion-button
                                             *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER"
-                                            [routerLink]="['/products', product.id, 'edit']"
+                                            [routerLink]="['/products', product?.id, 'edit']"
                                             color="primary"
                                     >
                                         <ion-icon name="settings-outline"
@@ -220,13 +220,68 @@
         </ion-row>
     </ion-grid>
 
-    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
-        <ion-infinite-scroll-content
-                loadingSpinner="bubbles"
-                loadingText="Loading more data...">
-        </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
+    <!--    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">-->
+    <!--        <ion-infinite-scroll-content-->
+    <!--                loadingSpinner="bubbles"-->
+    <!--                loadingText="Loading more data...">-->
+    <!--        </ion-infinite-scroll-content>-->
+    <!--    </ion-infinite-scroll>-->
 
     <ion-footer style="height: 10vh" #footer>
     </ion-footer>
+</ion-content>
+
+<!-- Skeleton screen -->
+<ion-content *ngIf="this.platformService.isMobile && !(productsMobile$ | async)">
+    <ion-card *ngFor="let skeleton of skeletons">
+        <ion-card-header>
+            <ion-card-subtitle>
+                <ion-skeleton-text animated style="width: 20%"></ion-skeleton-text>
+            </ion-card-subtitle>
+            <ion-card-title>
+                <ion-skeleton-text animated style="width: 20%"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 20%"></ion-skeleton-text>
+            </ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+            <ion-list>
+                <ion-item>
+                    <ion-label color="primary">
+                        <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+                    </ion-label>
+                    <ion-label>
+                        <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+                    </ion-label>
+                </ion-item>
+
+                <ion-item>
+                    <ion-label color="primary">
+                        <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+                    </ion-label>
+                    <ion-label>
+                        <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+                    </ion-label>
+                </ion-item>
+
+                <ion-item>
+                    <ion-label color="primary">
+                        <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+                    </ion-label>
+                    <ion-label>
+                        <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+                    </ion-label>
+                </ion-item>
+
+                <ion-item>
+                    <ion-label color="primary">
+                        <ion-skeleton-text animated style="width: 70%"></ion-skeleton-text>
+                    </ion-label>
+                    <ion-label>
+                        <ion-skeleton-text animated style="width: 70%"></ion-skeleton-text>
+                    </ion-label>
+                </ion-item>
+            </ion-list>
+        </ion-card-content>
+    </ion-card>
 </ion-content>

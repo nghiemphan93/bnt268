@@ -25,7 +25,6 @@ export class UsersPage implements OnInit, OnDestroy {
     skeletons = [1, 2];
     currentUser$: Observable<User | any>;
     @ViewChild('table', {static: false}) table: DatatableComponent;
-    user$ = this.authService.getCurrentUser$();
     isAuth$ = this.authService.getIsAuth$();
 
     constructor(private authService: AuthService,
@@ -43,11 +42,10 @@ export class UsersPage implements OnInit, OnDestroy {
     ngOnInit() {
         this.presentToastErrorIfTableNoData();
         this.currentUser$ = this.authService.getCurrentUser$();
-        this.users$ = this.userCacheService.getUsersCache$();
     }
 
     ionViewDidEnter() {
-
+        this.users$ = this.userCacheService.getUsersCache$();
     }
 
     ngOnDestroy() {
@@ -62,15 +60,5 @@ export class UsersPage implements OnInit, OnDestroy {
                 await this.toastService.presentToastError('No data or Network error. Please add more data or refresh the page');
             }
         }, 4000);
-    }
-
-    /**
-     * Identify which platform is being used
-     */
-    private preparePlatform() {
-        console.log(this.platform.platforms());
-        if (this.platform.is('tablet')) {
-            console.log('running tablet...');
-        }
     }
 }
