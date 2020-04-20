@@ -8,7 +8,7 @@
 </ion-header>
 
 <!--  Main Table Content for Desktop  -->
-<ion-content *ngIf="true">
+<ion-content *ngIf="platformService.isDesktop || platformService.isTablet">
     <section class="container">
         <ion-item-group class="ion-margin">
             <ion-button

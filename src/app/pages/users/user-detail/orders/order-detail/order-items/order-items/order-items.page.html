@@ -11,7 +11,7 @@
 
 <!--  Main Table Content for Desktop  -->
 <ion-content
-        *ngIf="true"
+        *ngIf="this.platformService.isDesktop || this.platformService.isTablet"
 >
     <section class="container">
         <ion-button

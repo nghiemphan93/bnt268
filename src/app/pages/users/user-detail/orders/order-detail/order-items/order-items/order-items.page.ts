@@ -19,6 +19,7 @@ import {Kind} from '../../../../../../../models/kind.enum';
 import {Product} from '../../../../../../../models/product';
 import {ReportService} from '../../../../../../../services/report.service';
 import {Status} from '../../../../../../../models/status.enum';
+import {PlatformService} from '../../../../../../../services/platform.service';
 
 @Component({
     selector: 'app-order-items',
@@ -31,15 +32,9 @@ export class OrderItemsPage implements OnInit, OnDestroy {
     orderItemsMobile$: Observable<OrderItem[]>[] = [];
     orderItems: OrderItem[] = [];
     tableStyle = 'material';
-    isDesktop: boolean;
-    isMobile: boolean;
     userId: string;
     orderId: string;
     skeletons = [1, 2];
-    editingOrderItem = {};
-    customActionSheetOptions: any = {
-        header: 'Status',
-    };
     @ViewChild('table', {static: false}) table: DatatableComponent;
     currentUser$ = this.authService.getCurrentUser$();
     user$: Observable<User | any>;
@@ -64,7 +59,8 @@ export class OrderItemsPage implements OnInit, OnDestroy {
         private orderItemService: OrderItemService,
         private orderItemCacheService: OrderItemCacheService,
         private statusService: StatusService,
-        private reportService: ReportService
+        private reportService: ReportService,
+        private platformService: PlatformService
     ) {
     }
 
@@ -74,16 +70,17 @@ export class OrderItemsPage implements OnInit, OnDestroy {
     }
 
     ionViewDidEnter() {
-        this.orderItemsDesktop$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
-        // if (this.isDesktop) {
-        //     this.orderItemsDesktop$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
-        // }
+        if (this.platformService.isMobile) {
+            // TODO
+        } else {
+            this.orderItemsDesktop$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
+        }
     }
 
 
     presentToastErrorIfTableNoData() {
         setTimeout(async () => {
-            if (this.table.rowCount === 0) {
+            if ((this.platformService.isDesktop || this.platformService.isTablet) && this.table.rowCount === 0) {
                 this.table.rowCount = -1;
                 await this.toastService.presentToastError('No data or Network error. Please add more data or refresh the page');
             }
@@ -111,8 +108,6 @@ export class OrderItemsPage implements OnInit, OnDestroy {
         this.user$ = this.userService.getUser(this.userId);
         this.orderId = this.activatedRoute.snapshot.params.orderId;
         this.order$ = this.orderService.getOrder(this.userId, this.orderId);
-        this.isDesktop = this.platform.is('desktop');
-        this.isMobile = !this.platform.is('desktop');
     }
 
     /**
@@ -123,7 +118,7 @@ export class OrderItemsPage implements OnInit, OnDestroy {
         if (this.orderService.isPageFullyLoaded()) {
             event.target.disabled = true;
         } else {
-            if (this.isMobile) {
+            if (this.platformService.isMobile) {
                 // TODO MOBILE
                 event.target.complete();
             } else {

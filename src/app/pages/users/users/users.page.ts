@@ -11,6 +11,7 @@ import {Claim} from '../../../models/claim.enum';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {ToastService} from '../../../services/toast.service';
 import {UserCacheService} from '../../../services/user-cache.service';
+import {PlatformService} from '../../../services/platform.service';
 
 @Component({
     selector: 'app-users',
@@ -21,8 +22,6 @@ export class UsersPage implements OnInit, OnDestroy {
     subscription = new Subscription();
     users$: Observable<User[] | any[]>;
     tableStyle = 'material';
-    isDesktop: boolean;
-    isMobile: boolean;
     skeletons = [1, 2];
     currentUser$: Observable<User | any>;
     @ViewChild('table', {static: false}) table: DatatableComponent;
@@ -36,12 +35,12 @@ export class UsersPage implements OnInit, OnDestroy {
                 public claimService: ClaimService,
                 public alertService: AlertService,
                 private toastService: ToastService,
-                private userCacheService: UserCacheService
+                private userCacheService: UserCacheService,
+                private platformService: PlatformService
     ) {
     }
 
     ngOnInit() {
-        this.preparePlatform();
         this.presentToastErrorIfTableNoData();
         this.currentUser$ = this.authService.getCurrentUser$();
         this.users$ = this.userCacheService.getUsersCache$();
@@ -58,7 +57,7 @@ export class UsersPage implements OnInit, OnDestroy {
 
     presentToastErrorIfTableNoData() {
         setTimeout(async () => {
-            if (this.table.rowCount === 0) {
+            if ((this.platformService.isDesktop || this.platformService.isTablet) && this.table.rowCount === 0) {
                 this.table.rowCount = -1;
                 await this.toastService.presentToastError('No data or Network error. Please add more data or refresh the page');
             }
@@ -69,7 +68,9 @@ export class UsersPage implements OnInit, OnDestroy {
      * Identify which platform is being used
      */
     private preparePlatform() {
-        this.isDesktop = this.platform.is('desktop');
-        this.isMobile = !this.platform.is('desktop');
+        console.log(this.platform.platforms());
+        if (this.platform.is('tablet')) {
+            console.log('running tablet...');
+        }
     }
 }

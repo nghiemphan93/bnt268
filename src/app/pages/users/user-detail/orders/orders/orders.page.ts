@@ -13,6 +13,7 @@ import {UserService} from '../../../../../services/user.service';
 import {OrderCacheService} from '../../../../../services/order-cache.service';
 import {StatusService} from '../../../../../services/status.service';
 import {Status} from '../../../../../models/status.enum';
+import {PlatformService} from '../../../../../services/platform.service';
 
 @Component({
     selector: 'app-orders',
@@ -25,14 +26,8 @@ export class OrdersPage implements OnInit, OnDestroy {
     ordersMobile$: Observable<Order[]>[] = [];
     orders: Order[] = [];
     tableStyle = 'material';
-    isDesktop: boolean;
-    isMobile: boolean;
     userId: string;
     skeletons = [1, 2];
-    editingOrderItem = {};
-    customActionSheetOptions: any = {
-        header: 'Status',
-    };
     @ViewChild('table', {static: false}) table: DatatableComponent;
     currentUser$ = this.authService.getCurrentUser$();
     user$: Observable<User | any>;
@@ -51,7 +46,8 @@ export class OrdersPage implements OnInit, OnDestroy {
         private authService: AuthService,
         private userService: UserService,
         private orderCacheService: OrderCacheService,
-        private statusService: StatusService
+        private statusService: StatusService,
+        private platformService: PlatformService
     ) {
     }
 
@@ -61,16 +57,17 @@ export class OrdersPage implements OnInit, OnDestroy {
     }
 
     ionViewDidEnter() {
-        this.ordersDesktop$ = this.orderCacheService.getOrdersCache$ByUserId(this.userId);
-        // if (this.isDesktop) {
-        //     this.ordersDesktop$ = this.orderCacheService.getOrdersCache$ByUserId(this.userId);
-        // }
+        if (this.platformService.isMobile) {
+            // TODO
+        } else {
+            this.ordersDesktop$ = this.orderCacheService.getOrdersCache$ByUserId(this.userId);
+        }
     }
 
 
     presentToastErrorIfTableNoData() {
         setTimeout(async () => {
-            if (this.table.rowCount === 0) {
+            if ((this.platformService.isDesktop || this.platformService.isTablet) && this.table.rowCount === 0) {
                 this.table.rowCount = -1;
                 await this.toastService.presentToastError('No data or Network error. Please add more data or refresh the page');
             }
@@ -96,8 +93,6 @@ export class OrdersPage implements OnInit, OnDestroy {
     private setup() {
         this.userId = this.activatedRoute.snapshot.params.userId;
         this.user$ = this.userService.getUser(this.userId);
-        this.isDesktop = this.platform.is('desktop');
-        this.isMobile = !this.platform.is('desktop');
     }
 
     /**
@@ -108,8 +103,8 @@ export class OrdersPage implements OnInit, OnDestroy {
         if (this.orderService.isPageFullyLoaded()) {
             event.target.disabled = true;
         } else {
-            if (this.isMobile) {
-                // TODO MOBILE
+            if (this.platformService.isMobile) {
+                // TODO
                 event.target.complete();
             } else {
             }

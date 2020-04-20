@@ -8,7 +8,7 @@
 </ion-header>
 
 <!--  Main Table Content for Desktop  -->
-<ion-content *ngIf="true">
+<ion-content *ngIf="this.platformService.isDesktop || this.platformService.isTablet">
     <ion-grid>
         <ion-row>
             <ion-col

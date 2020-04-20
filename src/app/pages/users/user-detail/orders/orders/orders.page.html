@@ -4,14 +4,14 @@
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>
-            {{ (user$ | async)?.email }}
+            Đơn hàng của {{ (user$ | async)?.displayName }}
         </ion-title>
     </ion-toolbar>
 </ion-header>
 
 <!--  Main Table Content for Desktop  -->
 <ion-content
-        *ngIf="true"
+        *ngIf="platformService.isDesktop || platformService.isTablet"
 >
     <section class="container">
         <ion-button

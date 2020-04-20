@@ -20,6 +20,7 @@ import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {takeLast} from 'rxjs/operators';
 import {ReportCacheService} from '../../../../../services/report-cache.service';
 import {Platform} from '@ionic/angular';
+import {PlatformService} from '../../../../../services/platform.service';
 
 @Component({
     selector: 'app-report-create',
@@ -42,8 +43,6 @@ export class ReportCreatePage implements OnInit, OnDestroy {
     tableStyle = 'material';
     @ViewChild('productsTable', {static: false}) productsTable: DatatableComponent;
     @ViewChild('silverTable', {static: false}) silverTable: DatatableComponent;
-    isDesktop: boolean;
-    isMobile: boolean;
 
     constructor(private orderService: OrderService,
                 private orderItemService: OrderItemService,
@@ -59,6 +58,7 @@ export class ReportCreatePage implements OnInit, OnDestroy {
                 private reportService: ReportService,
                 private reportCacheService: ReportCacheService,
                 private platform: Platform,
+                private platformService: PlatformService
     ) {
     }
 
@@ -70,12 +70,12 @@ export class ReportCreatePage implements OnInit, OnDestroy {
 
     presentToastErrorIfTableNoData() {
         setTimeout(async () => {
-            if (this.isDesktop && this.productsTable.rowCount === 0) {
+            if ((this.platformService.isDesktop || this.platformService.isTablet) && this.productsTable.rowCount === 0) {
                 this.productsTable.rowCount = -1;
                 await this.toastService.presentToastError('No data or Network error. Please add more data or refresh the page');
             }
 
-            if (this.isDesktop && this.silverTable.rowCount === 0) {
+            if ((this.platformService.isDesktop || this.platformService.isTablet) && this.silverTable.rowCount === 0) {
                 this.silverTable.rowCount = -1;
                 await this.toastService.presentToastError('No data or Network error. Please add more data or refresh the page');
             }
@@ -95,8 +95,6 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         this.user$ = this.userService.getUser(this.userId);
         this.reportId = this.activatedRoute.snapshot.params.reportId;
         this.report$ = this.reportService.getReport(this.userId, this.reportId);
-        this.isDesktop = this.platform.is('desktop');
-        this.isMobile = !this.platform.is('desktop');
     }
 
     prepareTableData() {

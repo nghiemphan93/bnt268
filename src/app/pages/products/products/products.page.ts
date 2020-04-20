@@ -10,6 +10,7 @@ import {AlertService} from '../../../services/alert.service';
 import {ProductCacheService} from '../../../services/product-cache.service';
 import {ToastService} from '../../../services/toast.service';
 import {AuthService} from '../../../services/auth.service';
+import {PlatformService} from '../../../services/platform.service';
 
 @Component({
     selector: 'app-products',
@@ -22,8 +23,6 @@ export class ProductsPage implements OnInit, OnDestroy {
     productsMobile$: Observable<Product[]>[] = [];
     products: Product[] = [];
     tableStyle = 'material';
-    isDesktop: boolean;
-    isMobile: boolean;
     skeletons = [1, 2];
     @ViewChild('table', {static: false}) table: DatatableComponent;
     user$ = this.authService.getCurrentUser$();
@@ -36,22 +35,21 @@ export class ProductsPage implements OnInit, OnDestroy {
                 public alertService: AlertService,
                 private productCacheService: ProductCacheService,
                 private toastService: ToastService,
-                private authService: AuthService
+                private authService: AuthService,
+                private platformService: PlatformService
     ) {
     }
 
     ngOnInit() {
-        this.preparePlatform();
         this.presentToastErrorIfTableNoData();
     }
 
     ionViewDidEnter() {
-        this.productsDesktop$ = this.productCacheService.getProductsCache$();
-        // if (this.isDesktop) {
-        //     this.productsDesktop$ = this.productCacheService.getProductsCache$();
-        // } else {
-        //     this.productsMobile$.push(this.productService.getLimitedProductsAfterStart());
-        // }
+        if (this.platformService.isMobile) {
+            // TODO
+        } else {
+            this.productsDesktop$ = this.productCacheService.getProductsCache$();
+        }
     }
 
     ngOnDestroy() {
@@ -66,19 +64,11 @@ export class ProductsPage implements OnInit, OnDestroy {
 
     presentToastErrorIfTableNoData() {
         setTimeout(async () => {
-            if (this.table.rowCount === 0) {
+            if ((this.platformService.isDesktop || this.platformService.isTablet) && this.table.rowCount === 0) {
                 this.table.rowCount = -1;
                 await this.toastService.presentToastError('No data or Network error. Please add more data or refresh the page');
             }
         }, 4000);
-    }
-
-    /**
-     * Identify which platform is being used
-     */
-    private preparePlatform() {
-        this.isDesktop = this.platform.is('desktop');
-        this.isMobile = !this.platform.is('desktop');
     }
 
     /**
@@ -89,8 +79,8 @@ export class ProductsPage implements OnInit, OnDestroy {
         if (this.productService.isPageFullyLoaded()) {
             event.target.disabled = true;
         } else {
-            if (this.isMobile) {
-                this.productsMobile$.push(this.productService.getLimitedProductsAfterLastDoc());
+            if (this.platformService.isMobile) {
+                // TODO
                 event.target.complete();
             } else {
                 // this.productsDesktop$.push(this.productService.getLimitedProductsAfterLastDoc());

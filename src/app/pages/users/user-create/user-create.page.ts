@@ -10,6 +10,7 @@ import {ClaimService} from '../../../services/claim.service';
 import {UserService} from '../../../services/user.service';
 import {ToastService} from '../../../services/toast.service';
 import {LoadingService} from '../../../services/loading.service';
+import {PlatformService} from '../../../services/platform.service';
 
 @Component({
     selector: 'app-user-create',
@@ -37,7 +38,8 @@ export class UserCreatePage implements OnInit, OnDestroy {
                 public claimService: ClaimService,
                 private userService: UserService,
                 private toastService: ToastService,
-                private loadingService: LoadingService
+                private loadingService: LoadingService,
+                private platformService: PlatformService
     ) {
     }
 
