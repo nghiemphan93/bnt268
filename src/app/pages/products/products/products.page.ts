@@ -20,12 +20,12 @@ import {PlatformService} from '../../../services/platform.service';
 export class ProductsPage implements OnInit, OnDestroy {
     subscription = new Subscription();
     productsDesktop$: Observable<Product[]>;
-    productsMobile$: Observable<Product[]>[] = [];
+    productsMobile$: Observable<Product[]>;
     products: Product[] = [];
     tableStyle = 'material';
     skeletons = [1, 2];
     @ViewChild('table', {static: false}) table: DatatableComponent;
-    user$ = this.authService.getCurrentUser$();
+    currentUser$ = this.authService.getCurrentUser$();
     isAuth$ = this.authService.getIsAuth$();
 
     constructor(private productService: ProductService,
@@ -46,7 +46,7 @@ export class ProductsPage implements OnInit, OnDestroy {
 
     ionViewDidEnter() {
         if (this.platformService.isMobile) {
-            // TODO
+            this.productsMobile$ = this.productCacheService.getProductsCache$();
         } else {
             this.productsDesktop$ = this.productCacheService.getProductsCache$();
         }
@@ -122,5 +122,9 @@ export class ProductsPage implements OnInit, OnDestroy {
                 this.products = [...products];
             }
         }
+    }
+
+    doNothing($event: MouseEvent) {
+
     }
 }

@@ -32,7 +32,7 @@
                         color="tertiary"
                         *ngIf="isDetailed && user && (currentUser$ | async)?.customClaims.WORKER !== true"
                         [routerLink]="['/users', user.uid, 'edit']"
-                        [disabled]="user.customClaims.DEV === true && (currentUser$ | async)?.customClaims?.DEV === undefined"
+                        [disabled]="user?.customClaims?.DEV === true && (currentUser$ | async)?.customClaims?.DEV === undefined"
 
                 >
                     <ion-icon name="settings-outline" class="ion-margin-end"></ion-icon>
