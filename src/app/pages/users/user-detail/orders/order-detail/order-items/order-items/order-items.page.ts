@@ -29,7 +29,7 @@ import {PlatformService} from '../../../../../../../services/platform.service';
 export class OrderItemsPage implements OnInit, OnDestroy {
     subscription = new Subscription();
     orderItemsDesktop$: Observable<OrderItem[]>;
-    orderItemsMobile$: Observable<OrderItem[]>[] = [];
+    orderItemsMobile$: Observable<OrderItem[]>;
     orderItems: OrderItem[] = [];
     tableStyle = 'material';
     userId: string;
@@ -71,7 +71,7 @@ export class OrderItemsPage implements OnInit, OnDestroy {
 
     ionViewDidEnter() {
         if (this.platformService.isMobile) {
-            // TODO
+            this.orderItemsMobile$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
         } else {
             this.orderItemsDesktop$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
         }

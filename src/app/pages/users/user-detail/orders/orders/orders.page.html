@@ -172,7 +172,6 @@
         </ion-button>
     </ion-item-group>
 
-    <!--      Cards as Products      -->
     <ion-grid fixed>
         <ion-row
         >
@@ -191,7 +190,7 @@
                                 <ion-button
                                         size="small"
                                         color="dark"
-                                        [routerLink]="['/users', userId, 'orders', order?.id]"
+                                        [routerLink]="['/users', userId, 'orders', order?.id, 'orderItems']"
                                         class="ion-text-wrap"
                                 >
                                     <ion-icon name="pricetag-outline"></ion-icon>
