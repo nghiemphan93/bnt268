@@ -58,7 +58,7 @@ export class ReportCreatePage implements OnInit, OnDestroy {
                 private reportService: ReportService,
                 private reportCacheService: ReportCacheService,
                 private platform: Platform,
-                private platformService: PlatformService
+                public platformService: PlatformService
     ) {
     }
 

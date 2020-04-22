@@ -35,7 +35,7 @@ export class UsersPage implements OnInit, OnDestroy {
                 public alertService: AlertService,
                 private toastService: ToastService,
                 private userCacheService: UserCacheService,
-                private platformService: PlatformService
+                public platformService: PlatformService
     ) {
     }
 

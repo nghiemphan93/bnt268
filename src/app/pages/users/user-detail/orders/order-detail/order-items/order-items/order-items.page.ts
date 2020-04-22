@@ -60,7 +60,7 @@ export class OrderItemsPage implements OnInit, OnDestroy {
         private orderItemCacheService: OrderItemCacheService,
         private statusService: StatusService,
         private reportService: ReportService,
-        private platformService: PlatformService
+        public platformService: PlatformService
     ) {
     }
 

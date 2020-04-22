@@ -47,7 +47,7 @@ export class OrdersPage implements OnInit, OnDestroy {
         private userService: UserService,
         private orderCacheService: OrderCacheService,
         private statusService: StatusService,
-        private platformService: PlatformService
+        public platformService: PlatformService
     ) {
     }
 

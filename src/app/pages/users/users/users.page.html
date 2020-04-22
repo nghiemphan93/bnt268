@@ -90,7 +90,7 @@
 
             <!--    Delete Button    -->
             <ngx-datatable-column
-                    *ngIf="(isAuth$ | async) && (user$ | async)?.customClaims?.DEV"
+                    *ngIf="(isAuth$ | async) && (currentUser$ | async)?.customClaims?.DEV"
                     name="Delete"
                     [sortable]="false"
             >

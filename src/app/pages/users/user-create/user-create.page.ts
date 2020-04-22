@@ -39,7 +39,7 @@ export class UserCreatePage implements OnInit, OnDestroy {
                 private userService: UserService,
                 private toastService: ToastService,
                 private loadingService: LoadingService,
-                private platformService: PlatformService
+                public platformService: PlatformService
     ) {
     }
 

@@ -36,7 +36,7 @@ export class ProductsPage implements OnInit, OnDestroy {
                 private productCacheService: ProductCacheService,
                 private toastService: ToastService,
                 private authService: AuthService,
-                private platformService: PlatformService
+                public platformService: PlatformService
     ) {
     }
 
