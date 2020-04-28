@@ -128,8 +128,8 @@
                     <ion-grid fixed>
                         <ion-row>
                             <ion-col
-                                    sizeXl="10"
-                                    offsetXl="1"
+                                    sizeXl="12"
+                                    offsetXl="0"
                                     sizeLg="12"
                                     offsetLg="0"
                                     sizeMd="12"
@@ -198,7 +198,7 @@
                                                     *ngIf="row.receiveWeight !== 0"
                                                     [color]="row.receiveWeight.includes('Tổng') ? 'danger' : 'warning'"
                                             >
-                                                {{ row?.receiveWeight }}
+                                                {{ row?.receiveWeight }} chỉ
                                             </ion-badge>
                                         </ng-template>
                                     </ngx-datatable-column>
@@ -414,25 +414,47 @@
                                 <!--    Give Weight   -->
                                 <ion-item *ngIf="silverReportRow.giveWeight !== 0">
                                     <ion-label>Giao:</ion-label>
-                                    <ion-badge
+                                    <!--                                    <ion-badge-->
+                                    <!--                                            *ngIf="silverReportRow.giveWeight !== 0"-->
+                                    <!--                                            slot="end"-->
+                                    <!--                                            color="tertiary"-->
+                                    <!--                                    >-->
+                                    <!--                                        {{ silverReportRow?.giveWeight}} chỉ-->
+                                    <!--                                    </ion-badge>-->
+
+                                    <ion-text
                                             *ngIf="silverReportRow.giveWeight !== 0"
                                             slot="end"
-                                            color="tertiary"
+                                            color=""
                                     >
                                         {{ silverReportRow?.giveWeight}} chỉ
-                                    </ion-badge>
+                                    </ion-text>
                                 </ion-item>
 
                                 <!--    Receive Weight   -->
                                 <ion-item>
-                                    <ion-label>Nhận:</ion-label>
-                                    <ion-badge
-                                            *ngIf="silverReportRow?.receiveWeight !== 0"
-                                            slot="end"
-                                            [color]="silverReportRow.receiveWeight.includes('Tổng') ? 'danger' : 'warning'"
-                                    >
-                                        {{ silverReportRow?.receiveWeight }}
-                                    </ion-badge>
+                                    <ng-container *ngIf="i === silverReportData.length - 1">
+                                        <ion-label><strong>Tất cả:</strong></ion-label>
+                                        <ion-badge
+                                                *ngIf="silverReportRow?.receiveWeight !== 0"
+                                                slot="end"
+                                                color="danger"
+                                        >
+                                            {{ silverReportRow?.receiveWeight }} chỉ
+                                        </ion-badge>
+                                    </ng-container>
+
+                                    <ng-container *ngIf="i !== silverReportData.length - 1">
+                                        <ion-label>Nhận:</ion-label>
+                                        <ion-text
+                                                *ngIf="silverReportRow?.receiveWeight !== 0"
+                                                slot="end"
+                                                color=""
+                                        >
+                                            {{ silverReportRow?.receiveWeight }}
+                                            chỉ
+                                        </ion-text>
+                                    </ng-container>
                                 </ion-item>
                             </ion-item-group>
                         </ion-card-content>

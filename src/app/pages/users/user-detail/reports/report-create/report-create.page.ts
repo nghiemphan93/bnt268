@@ -21,6 +21,10 @@ import {takeLast} from 'rxjs/operators';
 import {ReportCacheService} from '../../../../../services/report-cache.service';
 import {Platform} from '@ionic/angular';
 import {PlatformService} from '../../../../../services/platform.service';
+import {DatePipe, formatDate} from '@angular/common';
+import Timestamp = firebase.firestore.Timestamp;
+import * as firebase from 'firebase';
+import DateTimeFormat = Intl.DateTimeFormat;
 
 @Component({
     selector: 'app-report-create',
@@ -59,7 +63,8 @@ export class ReportCreatePage implements OnInit, OnDestroy {
                 private reportService: ReportService,
                 private reportCacheService: ReportCacheService,
                 private platform: Platform,
-                public platformService: PlatformService
+                public platformService: PlatformService,
+                private datePipe: DatePipe
     ) {
     }
 
@@ -101,7 +106,7 @@ export class ReportCreatePage implements OnInit, OnDestroy {
     prepareTableData() {
         this.report$.subscribe(reportFromServer => {
             this.report = reportFromServer;
-            console.log(this.report);
+            // console.log(this.report);
             this.prepareProductsData();
             this.prepareSilverData();
             console.table(this.productsReportData);
@@ -155,13 +160,15 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         for (let i = 0; i < rowNumber; i++) {
             const row: any = {};
             row.firstColumn = '';
-            row.giveWeight = this.report.giveWeights[i];
-            row.receiveWeight = this.report.receiveWeights[i] + ' chỉ';
             if (this.report.giveWeights[i] === undefined || this.report.giveWeights[i] === null) {
                 row.giveWeight = 0;
+            } else {
+                row.giveWeight = `${this.report.giveWeights[i]} (${this.datePipe.transform(new Date((this.report.giveWeightsDates[i] as unknown as Timestamp).seconds * 1000), 'dd/MM')})`;
             }
             if (this.report.receiveWeights[i] === undefined || this.report.receiveWeights[i] === null) {
                 row.receiveWeight = 0;
+            } else {
+                row.receiveWeight = `${this.report.receiveWeights[i]} (${this.datePipe.transform(new Date((this.report.receiveWeightsDates[i] as unknown as Timestamp).seconds * 1000), 'dd/MM')})`;
             }
             silverReportData.push(row);
         }
@@ -169,45 +176,68 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         const totalGiveReceiveRow: any = {};
         totalGiveReceiveRow.firstColumn = 'Tổng Giao và Nhận';
         totalGiveReceiveRow.giveWeight = this.report.totalGiveWeight;
-        totalGiveReceiveRow.receiveWeight = this.report.totalReceiveWeight + ' chỉ';
+        totalGiveReceiveRow.receiveWeight = this.report.totalReceiveWeight + '';
         silverReportData.push(totalGiveReceiveRow);
 
         const receiveWeightAdjustedRow: any = {};
         receiveWeightAdjustedRow.firstColumn = 'Nhận Cộng Hao';
         receiveWeightAdjustedRow.giveWeight = 0;
         // receiveWeightAdjustedRow.receiveWeight = this.report.totalReceiveWeightAdjusted;
-        receiveWeightAdjustedRow.receiveWeight = `${this.report.totalReceiveWeight} chỉ x 1.05 = ${this.report.totalReceiveWeightAdjusted} chỉ`;
+        receiveWeightAdjustedRow.receiveWeight = `${this.report.totalReceiveWeight} chỉ x 1.05 = ${this.report.totalReceiveWeightAdjusted}`;
         silverReportData.push(receiveWeightAdjustedRow);
 
         const bacDatRow: any = {};
         bacDatRow.firstColumn = 'Bạc Dát';
         bacDatRow.giveWeight = 0;
-        bacDatRow.receiveWeight = this.report.totalReceiveBacDatWeight + ' chỉ';
+        let bacDatString = '';
+        if (this.report.totalReceiveBacDatWeight !== 0) {
+            for (let i = 0; i < this.report.receiveBacDatWeights.length; i++) {
+                if (bacDatString !== '') {
+                    bacDatString = `${bacDatString} + ${this.report.receiveBacDatWeights[i]} (${this.datePipe.transform(new Date((this.report.receiveBacDatWeightsDates[i] as unknown as Timestamp).seconds * 1000), 'dd/MM')})`;
+                } else {
+                    bacDatString = `${this.report.receiveBacDatWeights[i]} (${this.datePipe.transform(new Date((this.report.receiveBacDatWeightsDates[i] as unknown as Timestamp).seconds * 1000), 'dd/MM')})`;
+                }
+            }
+            bacDatString += ' = ' + this.report.totalReceiveBacDatWeight;
+        }
+        bacDatRow.receiveWeight = bacDatString;
         silverReportData.push(bacDatRow);
 
         const bacTonRow: any = {};
         bacTonRow.firstColumn = 'Bạc Tồn';
         bacTonRow.giveWeight = 0;
-        bacTonRow.receiveWeight = this.report.totalReceiveBacTonWeight + ' chỉ';
+        // bacTonRow.receiveWeight = this.report.totalReceiveBacTonWeight + '';
+        let bacTonString = '';
+        if (this.report.totalReceiveBacTonWeight !== 0) {
+            for (let i = 0; i < this.report.receiveBacTonWeights.length; i++) {
+                if (bacTonString !== '') {
+                    bacTonString = `${bacTonString} + ${this.report.receiveBacTonWeights[i]} (${this.datePipe.transform(new Date((this.report.receiveBacTonWeightsDates[i] as unknown as Timestamp).seconds * 1000), 'dd/MM')})`;
+                } else {
+                    bacTonString = `${this.report.receiveBacTonWeights[i]} (${this.datePipe.transform(new Date((this.report.receiveBacTonWeightsDates[i] as unknown as Timestamp).seconds * 1000), 'dd/MM')})`;
+                }
+            }
+            bacTonString += ' = ' + this.report.totalReceiveBacTonWeight;
+        }
+        bacTonRow.receiveWeight = bacTonString;
         silverReportData.push(bacTonRow);
 
         const receiveWeightAdjustedIncludeBacDatRow: any = {};
         receiveWeightAdjustedIncludeBacDatRow.firstColumn = 'Tổng đã cộng hao, tồn và dát';
         receiveWeightAdjustedIncludeBacDatRow.giveWeight = this.report.totalGiveWeight;
         // receiveWeightAdjustedIncludeBacDatRow.receiveWeight = this.report.totalReceiveWeightAdjustedIncludeBacDat;
-        receiveWeightAdjustedIncludeBacDatRow.receiveWeight = `${this.report.totalReceiveWeightAdjusted} + ${this.report.totalReceiveBacDatWeight} + ${this.report.totalReceiveBacTonWeight} = ${this.report.totalReceiveWeightAdjustedIncludeBacDatVaTon} chỉ`;
+        receiveWeightAdjustedIncludeBacDatRow.receiveWeight = `${this.report.totalReceiveWeightAdjusted} + ${this.report.totalReceiveBacDatWeight} + ${this.report.totalReceiveBacTonWeight} = ${this.report.totalReceiveWeightAdjustedIncludeBacDatVaTon}`;
         silverReportData.push(receiveWeightAdjustedIncludeBacDatRow);
 
         const giveReceiveDifferenceRow: any = {};
         giveReceiveDifferenceRow.firstColumn = 'Giao - Nhận';
         giveReceiveDifferenceRow.giveWeight = 0;
-        giveReceiveDifferenceRow.receiveWeight = `${this.report.totalGiveWeight} - ${this.report.totalReceiveWeightAdjustedIncludeBacDatVaTon} = ${this.report.totalWeightDifference} chỉ`;
+        giveReceiveDifferenceRow.receiveWeight = `${this.report.totalGiveWeight} - ${this.report.totalReceiveWeightAdjustedIncludeBacDatVaTon} = ${this.report.totalWeightDifference}`;
         silverReportData.push(giveReceiveDifferenceRow);
 
         const lastRow: any = {};
         lastRow.firstColumn = '';
         lastRow.giveWeight = 0;
-        lastRow.receiveWeight = `Tổng ${this.report.totalWeightDifference} chỉ`;
+        lastRow.receiveWeight = `${this.report.totalWeightDifference}`;
         silverReportData.push(lastRow);
 
         this.silverReportData = [...silverReportData];

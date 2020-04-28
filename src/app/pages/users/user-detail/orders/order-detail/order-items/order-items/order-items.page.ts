@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Observable, Subscription} from 'rxjs';
 import {Order} from '../../../../../../../models/order';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
@@ -88,7 +88,7 @@ export class OrderItemsPage implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        console.log('bye bye OrdersPage...');
+        console.log('bye bye OrderItemsPage...');
 
         if (this.orderService.isPageFullyLoaded()) {
             this.orderService.setPageFullyLoaded(false);
@@ -175,12 +175,22 @@ export class OrderItemsPage implements OnInit, OnDestroy {
 
                                 if (product.productName.toLowerCase() === 'bạc dát') {
                                     newReport.totalReceiveBacDatWeight += orderItem.orderItemWeight;
+                                    const bacDatWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
+                                    const bacDatWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
+                                    newReport.receiveBacDatWeights.push(bacDatWeight);
+                                    newReport.receiveBacDatWeightsDates.push(bacDatWeightDate);
+
                                     newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
                                     newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
                                 }
 
                                 if (product.productName.toLowerCase() === 'bạc tồn') {
                                     newReport.totalReceiveBacTonWeight += orderItem.orderItemWeight;
+                                    const bacTonWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
+                                    const bacTonWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
+                                    newReport.receiveBacTonWeights.push(bacTonWeight);
+                                    newReport.receiveBacTonWeightsDates.push(bacTonWeightDate);
+
                                     newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
                                     newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
                                 }
@@ -221,12 +231,12 @@ export class OrderItemsPage implements OnInit, OnDestroy {
 
                 newReport.totalReceiveWeightAdjusted = Number((newReport.totalReceiveWeight * 1.05).toFixed(2));
 
-                newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon = newReport.totalReceiveWeightAdjusted + newReport.totalReceiveBacDatWeight + newReport.totalReceiveBacTonWeight;
+                newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon = Number(newReport.totalReceiveWeightAdjusted + newReport.totalReceiveBacDatWeight + newReport.totalReceiveBacTonWeight).toFixed(2) as unknown as number;
 
                 newReport.totalWeightDifference = Number((newReport.totalGiveWeight - newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon).toFixed(2));
                 newReport.createdAt = new Date();
 
-                console.log(newReport);
+                // console.log(newReport);
 
 
                 this.order$.subscribe(async orderFromServer => {

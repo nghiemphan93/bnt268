@@ -23,16 +23,16 @@
                 Quay về các tháng
             </ion-button>
 
-            <ion-button
-                    [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', 'create']"
-                    *ngIf="((isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER)"
-                    [disabled]="(order$ | async)?.orderStatus === DONE"
-            >
-                <ion-icon name="add-circle-outline"></ion-icon>
-                Đơn hàng mới
-            </ion-button>
-
             <ng-container *ngIf="!(currentUser$ | async)?.customClaims?.DEV">
+                <ion-button
+                        [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', 'create']"
+                        *ngIf="((isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER)"
+                        [disabled]="(order$ | async)?.orderStatus === DONE"
+                >
+                    <ion-icon name="add-circle-outline"></ion-icon>
+                    Đơn hàng mới
+                </ion-button>
+
                 <ion-button
                         *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER"
                         color="tertiary"
@@ -48,6 +48,13 @@
             </ng-container>
 
             <ng-container *ngIf="(currentUser$ | async)?.customClaims?.DEV">
+                <ion-button
+                        [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', 'create']"
+                >
+                    <ion-icon name="add-circle-outline"></ion-icon>
+                    Đơn hàng mới
+                </ion-button>
+
                 <ion-button
                         color="tertiary"
                         (click)="prepareReportHandler()"

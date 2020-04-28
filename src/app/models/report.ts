@@ -12,6 +12,10 @@ export class Report {
     giveWeightsDates: Date[] = [];
     receiveWeights: number[] = [];
     receiveWeightsDates: Date[] = [];
+    receiveBacDatWeights: number[] = [];
+    receiveBacDatWeightsDates: Date[] = [];
+    receiveBacTonWeights: number[] = [];
+    receiveBacTonWeightsDates: Date[] = [];
     totalGiveWeight = 0;
     totalReceiveWeight = 0;
     totalReceiveWeightAdjusted = 0;

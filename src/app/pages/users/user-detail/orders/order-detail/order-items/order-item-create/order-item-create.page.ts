@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {OrderService} from '../../../../../../../services/order.service';
 import {OrderItemService} from '../../../../../../../services/order-item.service';
 import {ProductService} from '../../../../../../../services/product.service';
@@ -70,7 +70,9 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
     ionViewDidEnter() {
     }
 
+    @HostListener('unloaded')
     ngOnDestroy(): void {
+        console.log('bye bye OrderItemCreatePage...');
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
@@ -268,7 +270,7 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
             }
 
             await this.loadingService.dismissLoading();
-            await this.router.navigate(['users', this.userId, 'orders', this.orderId, 'orderItems', this.orderItem.id]);
+            await this.router.navigate(['users', this.userId, 'orders', this.orderId, 'orderItems']);
             window.dispatchEvent(new Event('resize'));
             submitButton.disabled = false;
         } catch (e) {

@@ -14,6 +14,7 @@ import {AngularFireAuthModule} from '@angular/fire/auth';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
 import {AngularFireFunctionsModule} from '@angular/fire/functions';
 import {AngularFireAuthGuardModule} from '@angular/fire/auth-guard';
+import {DatePipe} from '@angular/common';
 
 @NgModule({
     declarations: [AppComponent],
@@ -31,6 +32,7 @@ import {AngularFireAuthGuardModule} from '@angular/fire/auth-guard';
     providers: [
         StatusBar,
         SplashScreen,
+        DatePipe
         // {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
         // {
         //     provide: LOCALE_ID,
