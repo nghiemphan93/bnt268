@@ -32,23 +32,35 @@
                 Đơn hàng mới
             </ion-button>
 
-            <ion-button
-                    *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER"
-                    color="tertiary"
-                    [disabled]="
-                (order$ | async)?.orderStatus === DONE
-                || !(orderItemsDesktop$ | async)
-                || (orderItemsDesktop$ | async)?.length === 0"
-                    (click)="prepareReportHandler()"
-            >
-                <ion-icon name="receipt-outline" class="ion-margin-end"></ion-icon>
-                Tổng kết
-            </ion-button>
+            <ng-container *ngIf="!(currentUser$ | async)?.customClaims?.DEV">
+                <ion-button
+                        *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER"
+                        color="tertiary"
+                        [disabled]="
+                            (order$ | async)?.orderStatus === DONE
+                            || (orderItems$ | async)?.length === 0
+                            "
+                        (click)="prepareReportHandler()"
+                >
+                    <ion-icon name="receipt-outline" class="ion-margin-end"></ion-icon>
+                    Tổng kết
+                </ion-button>
+            </ng-container>
+
+            <ng-container *ngIf="(currentUser$ | async)?.customClaims?.DEV">
+                <ion-button
+                        color="tertiary"
+                        (click)="prepareReportHandler()"
+                >
+                    <ion-icon name="receipt-outline" class="ion-margin-end"></ion-icon>
+                    Tổng kết
+                </ion-button>
+            </ng-container>
         </ion-item-group>
 
         <ngx-datatable
             #table
-            [rows]="orderItemsDesktop$ | async"
+            [rows]="orderItems$ | async"
             [rowHeight]="'auto'"
             [headerHeight]="50"
             [ngClass]="tableStyle"
@@ -196,48 +208,60 @@
 
 <!-- Cards Mobile -->
 <ion-content
-        *ngIf="this.platformService.isMobile && (orderItemsMobile$ | async)"
+        *ngIf="this.platformService.isMobile && (orderItems$ | async)"
 >
-    <ion-item-group>
-        <ion-button
-                [routerLink]="['/users', userId, 'orders']"
-                color="dark"
-        >
-            <ion-icon name="arrow-back-outline"></ion-icon>
-            Quay về các tháng
-        </ion-button>
-
-        <ion-button
-                [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', 'create']"
-                *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER"
-                [disabled]="(order$ | async)?.orderStatus === DONE"
-        >
-            <ion-icon name="add-circle-outline"></ion-icon>
-            Đơn hàng mới
-        </ion-button>
-
-        <ion-button
-                *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER"
-                color="tertiary"
-                [disabled]="
-                (order$ | async)?.orderStatus === DONE
-                || !(orderItemsMobile$ | async)
-                || (orderItemsMobile$ | async)?.length === 0"
-                (click)="prepareReportHandler()"
-        >
-            <ion-icon name="receipt-outline" class="ion-margin-end"></ion-icon>
-            Tổng kết
-        </ion-button>
-    </ion-item-group>
-
     <ion-grid fixed>
+        <ion-item-group>
+            <ion-button
+                    [routerLink]="['/users', userId, 'orders']"
+                    color="dark"
+            >
+                <ion-icon name="arrow-back-outline"></ion-icon>
+                Quay về các tháng
+            </ion-button>
+
+            <ion-button
+                    [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', 'create']"
+                    *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER"
+                    [disabled]="(order$ | async)?.orderStatus === DONE"
+            >
+                <ion-icon name="add-circle-outline"></ion-icon>
+                Đơn hàng mới
+            </ion-button>
+
+            <ng-container *ngIf="!(currentUser$ | async)?.customClaims?.DEV">
+                <ion-button
+                        *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER"
+                        color="tertiary"
+                        [disabled]="
+                            (order$ | async)?.orderStatus === DONE
+                            || (orderItems$ | async)?.length === 0
+                            "
+                        (click)="prepareReportHandler()"
+                >
+                    <ion-icon name="receipt-outline" class="ion-margin-end"></ion-icon>
+                    Tổng kết
+                </ion-button>
+            </ng-container>
+
+            <ng-container *ngIf="(currentUser$ | async)?.customClaims?.DEV">
+                <ion-button
+                        color="tertiary"
+                        (click)="prepareReportHandler()"
+                >
+                    <ion-icon name="receipt-outline" class="ion-margin-end"></ion-icon>
+                    Tổng kết
+                </ion-button>
+            </ng-container>
+        </ion-item-group>
+
         <ion-row
         >
             <ion-col
                     sizeMd="4"
                     sizeSm="6"
                     sizeXs="12"
-                    *ngFor="let orderItem of orderItemsMobile$ | async"
+                    *ngFor="let orderItem of orderItems$ | async"
             >
                 <ion-card
                         class="ion-no-margin ion-no-padding"
@@ -365,7 +389,7 @@
 </ion-content>
 
 <!-- Skeleton screen -->
-<ion-content *ngIf="this.platformService.isMobile && !(orderItemsMobile$ | async)">
+<ion-content *ngIf="this.platformService.isMobile && !(orderItems$ | async)">
     <ion-card *ngFor="let skeleton of skeletons">
         <ion-card-header>
             <ion-card-subtitle>

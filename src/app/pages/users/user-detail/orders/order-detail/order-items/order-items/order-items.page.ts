@@ -28,7 +28,7 @@ import {PlatformService} from '../../../../../../../services/platform.service';
 })
 export class OrderItemsPage implements OnInit, OnDestroy {
     subscription = new Subscription();
-    orderItemsDesktop$: Observable<OrderItem[]>;
+    orderItems$: Observable<OrderItem[]>;
     orderItemsMobile$: Observable<OrderItem[]>;
     orderItems: OrderItem[] = [];
     tableStyle = 'material';
@@ -71,9 +71,9 @@ export class OrderItemsPage implements OnInit, OnDestroy {
 
     ionViewDidEnter() {
         if (this.platformService.isMobile) {
-            this.orderItemsMobile$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
+            this.orderItems$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
         } else {
-            this.orderItemsDesktop$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
+            this.orderItems$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
         }
     }
 
@@ -152,7 +152,8 @@ export class OrderItemsPage implements OnInit, OnDestroy {
     }
 
     prepareReportHandler() {
-        this.subscription.add(this.orderItemsDesktop$.subscribe(async orderItemsFromServer => {
+        console.log('creating report...');
+        this.subscription.add(this.orderItems$.subscribe(async orderItemsFromServer => {
             try {
                 const newReport = new Report();
                 const productQuantityMapper = new Map<string, number>();
@@ -161,9 +162,11 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                     switch (orderItem.orderItemKind) {
                         case Kind.GIAO:
                             newReport.giveWeights.push(orderItem.orderItemWeight);
+                            newReport.giveWeightsDates.push(orderItem.createdAt);
                             break;
                         case Kind.NHẬN:
                             newReport.receiveWeights.push(orderItem.orderItemWeight);
+                            newReport.receiveWeightsDates.push(orderItem.createdAt);
 
                             for (let i = 0; i < orderItem.orderItemProducts.length; i++) {
                                 const product = orderItem.orderItemProducts[i];
@@ -173,11 +176,13 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                                 if (product.productName.toLowerCase() === 'bạc dát') {
                                     newReport.totalReceiveBacDatWeight += orderItem.orderItemWeight;
                                     newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
+                                    newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
                                 }
 
                                 if (product.productName.toLowerCase() === 'bạc tồn') {
                                     newReport.totalReceiveBacTonWeight += orderItem.orderItemWeight;
                                     newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
+                                    newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
                                 }
 
                                 if (productQuantity > 0) {

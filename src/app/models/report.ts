@@ -9,7 +9,9 @@ export class Report {
     totalPrice = 0;
 
     giveWeights: number[] = [];
+    giveWeightsDates: Date[] = [];
     receiveWeights: number[] = [];
+    receiveWeightsDates: Date[] = [];
     totalGiveWeight = 0;
     totalReceiveWeight = 0;
     totalReceiveWeightAdjusted = 0;

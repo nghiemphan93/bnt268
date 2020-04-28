@@ -43,6 +43,7 @@ export class ReportCreatePage implements OnInit, OnDestroy {
     tableStyle = 'material';
     @ViewChild('productsTable', {static: false}) productsTable: DatatableComponent;
     @ViewChild('silverTable', {static: false}) silverTable: DatatableComponent;
+    skeletons = [1, 2];
 
     constructor(private orderService: OrderService,
                 private orderItemService: OrderItemService,
@@ -103,6 +104,8 @@ export class ReportCreatePage implements OnInit, OnDestroy {
             console.log(this.report);
             this.prepareProductsData();
             this.prepareSilverData();
+            console.table(this.productsReportData);
+            console.table(this.silverReportData);
         });
     }
 
@@ -125,8 +128,10 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         this.productsReportData = [...productsReportData];
 
         // Emit event to resize columns width
-        this.configProductsReportTableSize();
-        this.productsTable.headerComponent.select.emit();
+        if (this.platformService.isTablet || this.platformService.isDesktop) {
+            this.configProductsReportTableSize();
+            this.productsTable.headerComponent.select.emit();
+        }
     }
 
     configProductsReportTableSize() {
@@ -209,8 +214,10 @@ export class ReportCreatePage implements OnInit, OnDestroy {
 
 
         // Emit event to resize columns width
-        this.configSilverReportTableSize();
-        this.silverTable.headerComponent.select.emit();
+        if (this.platformService.isTablet || this.platformService.isDesktop) {
+            this.configSilverReportTableSize();
+            this.silverTable.headerComponent.select.emit();
+        }
     }
 
     configSilverReportTableSize() {

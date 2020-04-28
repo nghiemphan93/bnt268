@@ -60,7 +60,6 @@ export class SigninPage implements OnInit {
                     if (currentUser.customClaims.WORKER === true) {
                         await this.router.navigate(['users', currentUser.uid, 'orders']);
                     } else {
-                        console.log(currentUser);
                         await this.router.navigate(['users']);
                     }
                     await this.toastService.presentToastSuccess('Sign in successfully');
