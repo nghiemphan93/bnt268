@@ -86,18 +86,38 @@
                     </ion-item-group>
 
                     <!--    Order Item Name   -->
+                    <!--                    <ion-item-group>-->
+                    <!--                        <ion-item>-->
+                    <!--                            <ion-label>Mã đơn hàng</ion-label>-->
+                    <!--                            <ion-input-->
+                    <!--                                    slot="end"-->
+                    <!--                                    type="text"-->
+                    <!--                                    formControlName="orderItemName"-->
+                    <!--                                    slot="end"-->
+                    <!--                                    *ngIf="!isDetailed"-->
+                    <!--                            ></ion-input>-->
+
+                    <!--                            <ion-label *ngIf="isDetailed">{{ orderItem?.orderItemName }}</ion-label>-->
+                    <!--                        </ion-item>-->
+                    <!--                    </ion-item-group>-->
+
+                    <!--        created Date            -->
                     <ion-item-group>
                         <ion-item>
-                            <ion-label>Mã đơn hàng</ion-label>
-                            <ion-input
-                                    slot="end"
-                                    type="text"
-                                    formControlName="orderItemName"
-                                    slot="end"
-                                    *ngIf="!isDetailed"
-                            ></ion-input>
+                            <ion-label>Ngày Tạo</ion-label>
+                            <ion-datetime
 
-                            <ion-label *ngIf="isDetailed">{{ orderItem?.orderItemName }}</ion-label>
+                                    formControlName="createdAt"
+                                    displayFormat="DD/MM/YY"
+                                    [readonly]="isDetailed"
+                            >
+                            </ion-datetime>
+
+<!--                            <ion-label-->
+<!--                                    *ngIf="isDetailed"-->
+<!--                            >-->
+<!--                                {{ orderItem?.createdAt?.toDate() | date:'dd/MM/yy' }}-->
+<!--                            </ion-label>-->
                         </ion-item>
                     </ion-item-group>
 
@@ -212,7 +232,7 @@
                                         type="number"
                                         slot="end"
                                         [formControl]="orderItemQuantities?.controls[i]"
-                                        [readonly]="isBacDatOrBacTon(i)"
+                                        [readonly]="isSilverDatOrBacTon(i)"
                                 ></ion-input>
 
                                 <ion-label *ngIf="isDetailed">

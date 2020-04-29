@@ -175,7 +175,7 @@ export class ReportCreatePage implements OnInit, OnDestroy {
 
         const totalGiveReceiveRow: any = {};
         totalGiveReceiveRow.firstColumn = 'Tổng Giao và Nhận';
-        totalGiveReceiveRow.giveWeight = this.report.totalGiveWeight;
+        totalGiveReceiveRow.giveWeight = Number(this.report.totalGiveWeight).toFixed(2);
         totalGiveReceiveRow.receiveWeight = this.report.totalReceiveWeight + '';
         silverReportData.push(totalGiveReceiveRow);
 
@@ -223,7 +223,7 @@ export class ReportCreatePage implements OnInit, OnDestroy {
 
         const receiveWeightAdjustedIncludeBacDatRow: any = {};
         receiveWeightAdjustedIncludeBacDatRow.firstColumn = 'Tổng đã cộng hao, tồn và dát';
-        receiveWeightAdjustedIncludeBacDatRow.giveWeight = this.report.totalGiveWeight;
+        receiveWeightAdjustedIncludeBacDatRow.giveWeight = Number(this.report.totalGiveWeight).toFixed(2);
         // receiveWeightAdjustedIncludeBacDatRow.receiveWeight = this.report.totalReceiveWeightAdjustedIncludeBacDat;
         receiveWeightAdjustedIncludeBacDatRow.receiveWeight = `${this.report.totalReceiveWeightAdjusted} + ${this.report.totalReceiveBacDatWeight} + ${this.report.totalReceiveBacTonWeight} = ${this.report.totalReceiveWeightAdjustedIncludeBacDatVaTon}`;
         silverReportData.push(receiveWeightAdjustedIncludeBacDatRow);
@@ -237,7 +237,7 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         const lastRow: any = {};
         lastRow.firstColumn = '';
         lastRow.giveWeight = 0;
-        lastRow.receiveWeight = `${this.report.totalWeightDifference}`;
+        lastRow.receiveWeight = `Tất cả: ${this.report.totalWeightDifference}`;
         silverReportData.push(lastRow);
 
         this.silverReportData = [...silverReportData];

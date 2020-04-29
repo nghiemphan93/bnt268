@@ -109,7 +109,7 @@
                                         *ngIf="row?.price === undefined"
                                         color="danger"
                                 >
-                                    Tổng {{ row?.totalPrice | number:'1.0-2' }} đ
+                                    Tất cả: {{ row?.totalPrice | number:'1.0-2' }} đ
                                 </ion-badge>
                             </ng-template>
                         </ngx-datatable-column>
@@ -196,7 +196,7 @@
                                         <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                                             <ion-badge
                                                     *ngIf="row.receiveWeight !== 0"
-                                                    [color]="row.receiveWeight.includes('Tổng') ? 'danger' : 'warning'"
+                                                    [color]="row.receiveWeight.includes('Tất cả') ? 'danger' : 'warning'"
                                             >
                                                 {{ row?.receiveWeight }} chỉ
                                             </ion-badge>
@@ -434,7 +434,7 @@
                                 <!--    Receive Weight   -->
                                 <ion-item>
                                     <ng-container *ngIf="i === silverReportData.length - 1">
-                                        <ion-label><strong>Tất cả:</strong></ion-label>
+                                        <ion-label><strong></strong></ion-label>
                                         <ion-badge
                                                 *ngIf="silverReportRow?.receiveWeight !== 0"
                                                 slot="end"

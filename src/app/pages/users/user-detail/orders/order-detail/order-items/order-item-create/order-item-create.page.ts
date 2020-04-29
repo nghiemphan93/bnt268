@@ -18,6 +18,9 @@ import {Kind} from '../../../../../../../models/kind.enum';
 import {KindService} from '../../../../../../../services/kind.service';
 import {element} from 'protractor';
 import {log} from 'util';
+import {DatePipe} from '@angular/common';
+import Timestamp = firebase.firestore.Timestamp;
+import * as firebase from 'firebase';
 
 @Component({
     selector: 'app-order-item-create',
@@ -47,6 +50,7 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
     NHẬN = Kind.NHẬN;
     @ViewChildren('productSelectElements') productsIonSelectQuery: QueryList<IonSelect>;
     productsIonSelects: IonSelect[];
+    today = new Date();
 
     constructor(private orderService: OrderService,
                 private orderItemService: OrderItemService,
@@ -58,7 +62,8 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
                 private loadingService: LoadingService,
                 private authService: AuthService,
                 private userService: UserService,
-                private kindService: KindService
+                private kindService: KindService,
+                public datePipe: DatePipe
     ) {
     }
 
@@ -105,6 +110,7 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
                     this.order$.subscribe(orderFromServer => {
                         this.order = orderFromServer;
                         this.orderItem = new OrderItem();
+                        this.orderItem.createdAt = new Date();
                         this.prepareFormValidationCreate();
                     });
                 } catch (e) {
@@ -150,6 +156,7 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
             orderItemQuantities: new FormArray([]),
             orderItemWeight: new FormControl('', Validators.required),
             order: new FormControl(this.order, Validators.required),
+            createdAt: new FormControl(new Date().toISOString(), Validators.required)
         });
 
         this.orderItemProducts = this.validationForm.get('orderItemProducts') as FormArray;
@@ -159,7 +166,8 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
 
     addProductAndQuantityFormControl(product?: Product, quantity?: number) {
         this.orderItemProducts.push(new FormControl(product, Validators.required));
-        this.orderItemQuantities.push(new FormControl(quantity, [Validators.required, Validators.pattern('^[0-9]*$')]));
+        // this.orderItemQuantities.push(new FormControl(quantity, [Validators.required, Validators.pattern('^[0-9]*$')]));
+        this.orderItemQuantities.push(new FormControl(quantity, [Validators.required]));
     }
 
     removeProductAndQuantityFormControl(index: number) {
@@ -181,6 +189,7 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
             orderItemQuantities: new FormArray([]),
             orderItemWeight: new FormControl(this.orderItem.orderItemWeight, Validators.required),
             order: new FormControl(this.orderItem.order, Validators.required),
+            createdAt: new FormControl(new Date((this.orderItem.createdAt as unknown as Timestamp).seconds * 1000).toISOString(), Validators.required)
         });
 
         this.orderItemProducts = this.validationForm.get('orderItemProducts') as FormArray;
@@ -202,12 +211,12 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
         this.productsIonSelectQuery.changes.subscribe(el => {
             const ionSelects: IonSelect[] = el._results;
             this.productsIonSelects = ionSelects;
-            console.log(ionSelects);
+            // console.log(ionSelects);
             ionSelects.forEach(async ionSelect => {
                 // if (ionSelect.value) {
                 //     ionSelect.selectedText = ionSelect.value.productName;
                 // }
-                console.log(ionSelect);
+                // console.log(ionSelect);
                 // await ionSelect.open();
                 // await ionSelect.ionCancel;
             });
@@ -224,6 +233,7 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
         this.orderItem.orderItemKind = this.validationForm.value.orderItemKind;
         this.orderItem.orderItemWeight = this.validationForm.value.orderItemWeight;
         this.orderItem.order = this.validationForm.value.order;
+        this.orderItem.createdAt = new Date(this.validationForm.value.createdAt);
 
 
         const orderItemProducts: Product[] = this.validationForm.value.orderItemProducts;
@@ -258,15 +268,15 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
         await this.transferDataFromFormToObject();
         try {
             if (this.isCreated) {
-                this.orderItem.createdAt = new Date();
+                // this.orderItem.createdAt = new Date();
                 const result = await this.orderItemService.createOrderItem(this.userId, this.orderId, this.orderItem);
                 this.orderItem.id = result.id;
                 await this.toastService.presentToastSuccess(`Successfully created Order Item ${this.orderItem.orderItemName}`);
-                this.prepareFormValidationCreate();
+                // this.prepareFormValidationCreate();
             } else {
                 await this.orderItemService.updateOrderItem(this.userId, this.orderId, this.orderItem);
                 await this.toastService.presentToastSuccess(`Successfully updated Order Item ${this.orderItem.orderItemName}`);
-                this.prepareFormValidationUpdateOrDetail();
+                // this.prepareFormValidationUpdateOrDetail();
             }
 
             await this.loadingService.dismissLoading();
@@ -291,21 +301,32 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
     }
 
     bacDatHandler(productIndex: number) {
-        console.log(this.productsIonSelects[productIndex]);
+        // console.log(this.productsIonSelects[productIndex]);
         const selectedProduct: Product = this.validationForm.value.orderItemProducts[productIndex];
         const selectedQuantity: number = this.validationForm.value.orderItemQuantities[productIndex];
-        if (selectedProduct.productName.toLowerCase() === 'bạc dát' || selectedProduct.productName.toLowerCase() === 'bạc tồn') {
+        // if (selectedProduct.productName.toLowerCase() === 'bạc dát' || selectedProduct.productName.toLowerCase() === 'bạc tồn' || selectedProduct.productName.toLowerCase() === 'bạc phôi' || selectedProduct.productName.toLowerCase() === 'bạc') {
+        //     this.orderItemQuantities.at(productIndex).patchValue(0);
+        // } else {
+        //     this.orderItemQuantities.at(productIndex).patchValue(null);
+        // }
+
+        if (selectedProduct.productName.toLowerCase().includes('bạc')) {
             this.orderItemQuantities.at(productIndex).patchValue(0);
         } else {
             this.orderItemQuantities.at(productIndex).patchValue(null);
         }
     }
 
-    isBacDatOrBacTon(productIndex: number) {
+    isSilverDatOrBacTon(productIndex: number) {
         const selectedProduct: Product = this.validationForm.value.orderItemProducts[productIndex];
         const selectedQuantity: number = this.validationForm.value.orderItemQuantities[productIndex];
         if (selectedProduct) {
-            if (selectedProduct.productName.toLowerCase() === 'bạc dát' || selectedProduct.productName.toLowerCase() === 'bạc tồn') {
+            // if (selectedProduct.productName.toLowerCase() === 'bạc dát' || selectedProduct.productName.toLowerCase() === 'bạc tồn') {
+            //     return true;
+            // } else {
+            //     return false;
+            // }
+            if (selectedProduct.productName.toLowerCase().includes('bạc')) {
                 return true;
             } else {
                 return false;

@@ -221,9 +221,9 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                     return previousValue + currentValue;
                 });
 
-                newReport.totalGiveWeight = newReport.giveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                newReport.totalGiveWeight = Number(newReport.giveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
                     return previousValue + currentValue;
-                });
+                })).toFixed(2) as unknown as number;
 
                 newReport.totalReceiveWeight = Number(newReport.receiveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
                     return previousValue + currentValue;

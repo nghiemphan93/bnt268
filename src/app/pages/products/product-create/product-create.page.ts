@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {AngularFireStorage, AngularFireUploadTask} from '@angular/fire/storage';
 import {Observable, Subscription} from 'rxjs';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
@@ -41,7 +41,8 @@ export class ProductCreatePage implements OnInit, OnDestroy {
         this.preparePageContent();
     }
 
-    async ngOnDestroy() {
+    @HostListener('unloaded')
+    ngOnDestroy() {
         console.log('bye bye ProductCreatePage...');
         if (this.subscription) {
             this.subscription.unsubscribe();
@@ -125,12 +126,12 @@ export class ProductCreatePage implements OnInit, OnDestroy {
                 this.product.createdAt = new Date();
                 await this.productService.createProduct(this.product);
                 await this.toastService.presentToastSuccess(`Created ${this.product.productName} successfully`);
-                this.prepareFormValidationCreate();
+                // this.prepareFormValidationCreate();
 
             } else {
                 await this.productService.updateProduct(this.product);
                 await this.toastService.presentToastSuccess(`Updated ${this.product.productName} successfully`);
-                this.prepareFormValidationUpdateOrDetail();
+                // this.prepareFormValidationUpdateOrDetail();
             }
 
             await this.router.navigate(['products']);
