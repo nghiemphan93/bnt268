@@ -20,6 +20,9 @@ import {Product} from '../../../../../../../models/product';
 import {ReportService} from '../../../../../../../services/report.service';
 import {Status} from '../../../../../../../models/status.enum';
 import {PlatformService} from '../../../../../../../services/platform.service';
+import {ProductService} from '../../../../../../../services/product.service';
+import {ProductCacheService} from '../../../../../../../services/product-cache.service';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'app-order-items',
@@ -60,7 +63,9 @@ export class OrderItemsPage implements OnInit, OnDestroy {
         private orderItemCacheService: OrderItemCacheService,
         private statusService: StatusService,
         private reportService: ReportService,
-        public platformService: PlatformService
+        public platformService: PlatformService,
+        private productService: ProductService,
+        private productCacheService: ProductCacheService
     ) {
     }
 
@@ -153,103 +158,110 @@ export class OrderItemsPage implements OnInit, OnDestroy {
 
     prepareReportHandler() {
         console.log('creating report...');
-        this.subscription.add(this.orderItems$.subscribe(async orderItemsFromServer => {
-            try {
-                const newReport = new Report();
-                const productQuantityMapper = new Map<string, number>();
-                const products: Product[] = [];
-                orderItemsFromServer.forEach(orderItem => {
-                    switch (orderItem.orderItemKind) {
-                        case Kind.GIAO:
-                            newReport.giveWeights.push(orderItem.orderItemWeight);
-                            newReport.giveWeightsDates.push(orderItem.createdAt);
-                            break;
-                        case Kind.NHẬN:
-                            newReport.receiveWeights.push(orderItem.orderItemWeight);
-                            newReport.receiveWeightsDates.push(orderItem.createdAt);
+        this.subscription.add(this.productCacheService.getProductsCache$().subscribe(async productsFromServer => {
+            this.subscription.add(this.orderItems$.subscribe(async orderItemsFromServer => {
+                try {
+                    if (productsFromServer.length > 0) {
+                        const newReport = new Report();
+                        const productQuantityMapper = new Map<string, number>();
+                        let products: Product[] = [];
+                        orderItemsFromServer.forEach(orderItem => {
+                            switch (orderItem.orderItemKind) {
+                                case Kind.GIAO:
+                                    newReport.giveWeights.push(orderItem.orderItemWeight);
+                                    newReport.giveWeightsDates.push(orderItem.createdAt);
+                                    break;
+                                case Kind.NHẬN:
+                                    newReport.receiveWeights.push(orderItem.orderItemWeight);
+                                    newReport.receiveWeightsDates.push(orderItem.createdAt);
 
-                            for (let i = 0; i < orderItem.orderItemProducts.length; i++) {
-                                const product = orderItem.orderItemProducts[i];
-                                const productId = orderItem.orderItemProducts[i].id;
-                                const productQuantity = orderItem.orderItemQuantities[i];
+                                    for (let i = 0; i < orderItem.orderItemProducts.length; i++) {
+                                        // const product = orderItem.orderItemProducts[i];
+                                        const product = productsFromServer.find(productTemp => productTemp.id === orderItem.orderItemProducts[i].id);
+                                        const productId = orderItem.orderItemProducts[i].id;
+                                        const productQuantity = orderItem.orderItemQuantities[i];
 
-                                if (product.productName.toLowerCase() === 'bạc dát') {
-                                    newReport.totalReceiveBacDatWeight += orderItem.orderItemWeight;
-                                    const bacDatWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
-                                    const bacDatWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
-                                    newReport.receiveBacDatWeights.push(bacDatWeight);
-                                    newReport.receiveBacDatWeightsDates.push(bacDatWeightDate);
+                                        if (product.productName.toLowerCase() === 'bạc dát') {
+                                            newReport.totalReceiveBacDatWeight += orderItem.orderItemWeight;
+                                            const bacDatWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
+                                            const bacDatWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
+                                            newReport.receiveBacDatWeights.push(bacDatWeight);
+                                            newReport.receiveBacDatWeightsDates.push(bacDatWeightDate);
 
-                                    newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
-                                    newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
-                                }
+                                            newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
+                                            newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
+                                        }
 
-                                if (product.productName.toLowerCase() === 'bạc tồn') {
-                                    newReport.totalReceiveBacTonWeight += orderItem.orderItemWeight;
-                                    const bacTonWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
-                                    const bacTonWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
-                                    newReport.receiveBacTonWeights.push(bacTonWeight);
-                                    newReport.receiveBacTonWeightsDates.push(bacTonWeightDate);
+                                        if (product.productName.toLowerCase() === 'bạc tồn') {
+                                            newReport.totalReceiveBacTonWeight += orderItem.orderItemWeight;
+                                            const bacTonWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
+                                            const bacTonWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
+                                            newReport.receiveBacTonWeights.push(bacTonWeight);
+                                            newReport.receiveBacTonWeightsDates.push(bacTonWeightDate);
 
-                                    newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
-                                    newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
-                                }
+                                            newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
+                                            newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
+                                        }
 
-                                if (productQuantity > 0) {
-                                    if (productQuantityMapper.has(productId)) {
-                                        const newTotalQuantity = productQuantityMapper.get(productId) + productQuantity;
-                                        productQuantityMapper.set(productId, newTotalQuantity);
-                                    } else {
-                                        productQuantityMapper.set(productId, productQuantity);
-                                        products.push(product);
+                                        if (productQuantity > 0) {
+                                            if (productQuantityMapper.has(productId)) {
+                                                const newTotalQuantity = productQuantityMapper.get(productId) + productQuantity;
+                                                productQuantityMapper.set(productId, newTotalQuantity);
+                                            } else {
+                                                productQuantityMapper.set(productId, productQuantity);
+                                                products.push(product);
+                                            }
+                                        }
                                     }
-                                }
-
+                                    break;
                             }
-                            break;
+                        });
+
+                        products = products.sort((a, b) => a.productName >= b.productName ? 1 : -1);
+
+                        products.forEach(product => {
+                            // console.log(`${product.productName} - ${productQuantityMapper.get(product.id)}`);
+                            newReport.products.push(product);
+                            newReport.quantities.push(productQuantityMapper.get(product.id));
+                            newReport.totalPricePerProduct.push(product.productPrice * productQuantityMapper.get(product.id));
+                        });
+
+                        newReport.totalPrice = newReport.totalPricePerProduct.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                            return previousValue + currentValue;
+                        });
+
+                        newReport.totalGiveWeight = Number(newReport.giveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                            return previousValue + currentValue;
+                        })).toFixed(2) as unknown as number;
+
+                        newReport.totalReceiveWeight = Number(newReport.receiveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                            return previousValue + currentValue;
+                        }).toFixed(2));
+
+                        newReport.totalReceiveWeightAdjusted = Number((newReport.totalReceiveWeight * 1.05).toFixed(2));
+
+                        newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon = Number(newReport.totalReceiveWeightAdjusted + newReport.totalReceiveBacDatWeight + newReport.totalReceiveBacTonWeight).toFixed(2) as unknown as number;
+
+                        newReport.totalWeightDifference = Number((newReport.totalGiveWeight - newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon).toFixed(2));
+                        newReport.createdAt = new Date();
+
+                        // console.table(productsFromServer);
+                        // console.log(newReport);
+
+
+                        this.order$.subscribe(async orderFromServer => {
+                            orderFromServer.orderStatus = Status.DONE;
+                            await this.orderService.updateOrder(this.userId, orderFromServer);
+                            await this.toastService.presentToastSuccess(`change Status of Order ${orderFromServer.orderName} to DONE successfully`);
+                            await this.reportService.createReportByOrderId(this.userId, this.orderId, newReport);
+                            await this.toastService.presentToastSuccess(`created Report for Order ${orderFromServer.orderName} successfully`);
+                        });
                     }
-                });
-
-                products.forEach(product => {
-                    // console.log(`${product.productName} - ${productQuantityMapper.get(product.id)}`);
-                    newReport.products.push(product);
-                    newReport.quantities.push(productQuantityMapper.get(product.id));
-                    newReport.totalPricePerProduct.push(product.productPrice * productQuantityMapper.get(product.id));
-                });
-
-                newReport.totalPrice = newReport.totalPricePerProduct.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
-                    return previousValue + currentValue;
-                });
-
-                newReport.totalGiveWeight = Number(newReport.giveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
-                    return previousValue + currentValue;
-                })).toFixed(2) as unknown as number;
-
-                newReport.totalReceiveWeight = Number(newReport.receiveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
-                    return previousValue + currentValue;
-                }).toFixed(2));
-
-                newReport.totalReceiveWeightAdjusted = Number((newReport.totalReceiveWeight * 1.05).toFixed(2));
-
-                newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon = Number(newReport.totalReceiveWeightAdjusted + newReport.totalReceiveBacDatWeight + newReport.totalReceiveBacTonWeight).toFixed(2) as unknown as number;
-
-                newReport.totalWeightDifference = Number((newReport.totalGiveWeight - newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon).toFixed(2));
-                newReport.createdAt = new Date();
-
-                // console.log(newReport);
-
-
-                this.order$.subscribe(async orderFromServer => {
-                    orderFromServer.orderStatus = Status.DONE;
-                    await this.orderService.updateOrder(this.userId, orderFromServer);
-                    await this.toastService.presentToastSuccess(`change Status of Order ${orderFromServer.orderName} to DONE successfully`);
-                    await this.reportService.createReportByOrderId(this.userId, this.orderId, newReport);
-                    await this.toastService.presentToastSuccess(`created Report for Order ${orderFromServer.orderName} successfully`);
-                });
-            } catch (e) {
-                console.log(e);
-                await this.toastService.presentToastError(e.message);
-            }
+                } catch (e) {
+                    console.log(e);
+                    await this.toastService.presentToastError(e.message);
+                }
+            }));
         }));
     }
 }

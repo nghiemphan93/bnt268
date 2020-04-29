@@ -21,6 +21,7 @@ import {log} from 'util';
 import {DatePipe} from '@angular/common';
 import Timestamp = firebase.firestore.Timestamp;
 import * as firebase from 'firebase';
+import {ProductCacheService} from '../../../../../../../services/product-cache.service';
 
 @Component({
     selector: 'app-order-item-create',
@@ -63,7 +64,8 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
                 private authService: AuthService,
                 private userService: UserService,
                 private kindService: KindService,
-                public datePipe: DatePipe
+                public datePipe: DatePipe,
+                private productCacheService: ProductCacheService
     ) {
     }
 
@@ -92,7 +94,8 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
         this.user$ = this.userService.getUser(this.userId);
         this.orderId = this.activatedRoute.snapshot.params.orderId;
         this.order$ = this.orderService.getOrder(this.userId, this.orderId);
-        this.products$ = this.productService.getProducts();
+        // this.products$ = this.productService.getProducts();
+        this.products$ = this.productCacheService.getProductsCache$();
         this.orderItemId = this.activatedRoute.snapshot.params.orderItemId;
     }
 

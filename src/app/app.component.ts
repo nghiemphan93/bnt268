@@ -6,6 +6,7 @@ import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {AuthService} from './services/auth.service';
 import {Router} from '@angular/router';
 import {UserCacheService} from './services/user-cache.service';
+import {ProductCacheService} from './services/product-cache.service';
 
 @Component({
     selector: 'app-root',
@@ -46,7 +47,8 @@ export class AppComponent implements OnInit {
         private statusBar: StatusBar,
         private authService: AuthService,
         private router: Router,
-        private userCacheService: UserCacheService
+        private userCacheService: UserCacheService,
+        private productCacheService: ProductCacheService
     ) {
         this.initializeApp();
     }
@@ -60,6 +62,7 @@ export class AppComponent implements OnInit {
 
     initServices() {
         this.userCacheService.init();
+        this.productCacheService.init();
     }
 
     ngOnInit() {

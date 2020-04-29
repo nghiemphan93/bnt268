@@ -10,12 +10,16 @@ import {AuthService} from './auth.service';
 })
 export class ProductCacheService {
     productsCache: Product[];
-    productsSubject: BehaviorSubject<Product[]> = new BehaviorSubject<Product[]>(null);
+    productsSubject: BehaviorSubject<Product[]> = new BehaviorSubject<Product[]>([]);
 
     constructor(private productService: ProductService,
                 private authService: AuthService
     ) {
         console.log('product cache service created...');
+    }
+
+    init() {
+        this.getProductsCache$().subscribe();
     }
 
     /**
