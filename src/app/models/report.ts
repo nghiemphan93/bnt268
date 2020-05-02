@@ -18,6 +18,7 @@ export class Report {
     receiveBacTonWeightsDates: Date[] = [];
     totalGiveWeight = 0;
     totalReceiveWeight = 0;
+    totalHaoWeight = 0;
     totalReceiveWeightAdjusted = 0;
     totalReceiveBacDatWeight = 0;
     totalReceiveBacTonWeight = 0;

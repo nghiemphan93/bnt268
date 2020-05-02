@@ -113,11 +113,11 @@
                             >
                             </ion-datetime>
 
-<!--                            <ion-label-->
-<!--                                    *ngIf="isDetailed"-->
-<!--                            >-->
-<!--                                {{ orderItem?.createdAt?.toDate() | date:'dd/MM/yy' }}-->
-<!--                            </ion-label>-->
+                            <!--                            <ion-label-->
+                            <!--                                    *ngIf="isDetailed"-->
+                            <!--                            >-->
+                            <!--                                {{ orderItem?.createdAt?.toDate() | date:'dd/MM/yy' }}-->
+                            <!--                            </ion-label>-->
                         </ion-item>
                     </ion-item-group>
 
@@ -200,7 +200,7 @@
                                 <ion-label>Sản phẩm</ion-label>
                                 <ion-select
                                         *ngIf="!isDetailed"
-                                        interface="popover"
+                                        interface="action-sheet"
                                         [compareWith]="compareWithFn"
                                         [formControl]="orderItemProducts?.controls[i]"
                                         slot="end"
@@ -211,7 +211,7 @@
                                             *ngFor="let product of products$ | async"
                                             [value]="product"
                                     >
-                                        {{ product?.productName }}
+                                        {{ product?.productName }} {{ product?.productPrice | number:'1.0-2' }} đ
                                     </ion-select-option>
                                 </ion-select>
 

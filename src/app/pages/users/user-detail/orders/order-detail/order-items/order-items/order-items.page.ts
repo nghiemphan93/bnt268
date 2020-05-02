@@ -5,7 +5,7 @@ import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {User} from 'firebase';
 import {OrderService} from '../../../../../../../services/order.service';
 import {AlertController, Config, Platform} from '@ionic/angular';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AlertService} from '../../../../../../../services/alert.service';
 import {ToastService} from '../../../../../../../services/toast.service';
 import {AuthService} from '../../../../../../../services/auth.service';
@@ -23,6 +23,7 @@ import {PlatformService} from '../../../../../../../services/platform.service';
 import {ProductService} from '../../../../../../../services/product.service';
 import {ProductCacheService} from '../../../../../../../services/product-cache.service';
 import * as _ from 'lodash';
+import {LoadingService} from '../../../../../../../services/loading.service';
 
 @Component({
     selector: 'app-order-items',
@@ -65,7 +66,9 @@ export class OrderItemsPage implements OnInit, OnDestroy {
         private reportService: ReportService,
         public platformService: PlatformService,
         private productService: ProductService,
-        private productCacheService: ProductCacheService
+        private productCacheService: ProductCacheService,
+        private router: Router,
+        private loadingService: LoadingService
     ) {
     }
 
@@ -156,8 +159,9 @@ export class OrderItemsPage implements OnInit, OnDestroy {
         }
     }
 
-    prepareReportHandler() {
+    async prepareReportHandler() {
         console.log('creating report...');
+        await this.loadingService.presentLoading();
         this.subscription.add(this.productCacheService.getProductsCache$().subscribe(async productsFromServer => {
             this.subscription.add(this.orderItems$.subscribe(async orderItemsFromServer => {
                 try {
@@ -176,41 +180,45 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                                     newReport.receiveWeightsDates.push(orderItem.createdAt);
 
                                     for (let i = 0; i < orderItem.orderItemProducts.length; i++) {
-                                        // const product = orderItem.orderItemProducts[i];
+
                                         const product = productsFromServer.find(productTemp => productTemp.id === orderItem.orderItemProducts[i].id);
                                         const productId = orderItem.orderItemProducts[i].id;
                                         const productQuantity = orderItem.orderItemQuantities[i];
+                                        try {
+                                            if (product.productName.toLowerCase() === 'bạc dát') {
+                                                newReport.totalReceiveBacDatWeight += orderItem.orderItemWeight;
+                                                const bacDatWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
+                                                const bacDatWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
+                                                newReport.receiveBacDatWeights.push(bacDatWeight);
+                                                newReport.receiveBacDatWeightsDates.push(bacDatWeightDate);
 
-                                        if (product.productName.toLowerCase() === 'bạc dát') {
-                                            newReport.totalReceiveBacDatWeight += orderItem.orderItemWeight;
-                                            const bacDatWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
-                                            const bacDatWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
-                                            newReport.receiveBacDatWeights.push(bacDatWeight);
-                                            newReport.receiveBacDatWeightsDates.push(bacDatWeightDate);
-
-                                            newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
-                                            newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
-                                        }
-
-                                        if (product.productName.toLowerCase() === 'bạc tồn') {
-                                            newReport.totalReceiveBacTonWeight += orderItem.orderItemWeight;
-                                            const bacTonWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
-                                            const bacTonWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
-                                            newReport.receiveBacTonWeights.push(bacTonWeight);
-                                            newReport.receiveBacTonWeightsDates.push(bacTonWeightDate);
-
-                                            newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
-                                            newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
-                                        }
-
-                                        if (productQuantity > 0) {
-                                            if (productQuantityMapper.has(productId)) {
-                                                const newTotalQuantity = productQuantityMapper.get(productId) + productQuantity;
-                                                productQuantityMapper.set(productId, newTotalQuantity);
-                                            } else {
-                                                productQuantityMapper.set(productId, productQuantity);
-                                                products.push(product);
+                                                newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
+                                                newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
                                             }
+
+                                            if (product.productName.toLowerCase() === 'bạc tồn') {
+                                                newReport.totalReceiveBacTonWeight += orderItem.orderItemWeight;
+                                                const bacTonWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
+                                                const bacTonWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
+                                                newReport.receiveBacTonWeights.push(bacTonWeight);
+                                                newReport.receiveBacTonWeightsDates.push(bacTonWeightDate);
+
+                                                newReport.receiveWeights.splice(newReport.receiveWeights.length - 1, 1);
+                                                newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
+                                            }
+
+                                            if (productQuantity > 0) {
+                                                if (productQuantityMapper.has(productId)) {
+                                                    const newTotalQuantity = productQuantityMapper.get(productId) + productQuantity;
+                                                    productQuantityMapper.set(productId, newTotalQuantity);
+                                                } else {
+                                                    productQuantityMapper.set(productId, productQuantity);
+                                                    products.push(product);
+                                                }
+                                            }
+                                        } catch (e) {
+                                            this.toastService.presentToastError(`không tìm thấy sản phẩm có tên ${product.productName}`);
+                                            throw e;
                                         }
                                     }
                                     break;
@@ -238,7 +246,9 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                             return previousValue + currentValue;
                         }).toFixed(2));
 
-                        newReport.totalReceiveWeightAdjusted = Number((newReport.totalReceiveWeight * 1.05).toFixed(2));
+                        newReport.totalHaoWeight = Number(Number(newReport.totalReceiveWeight * 0.05).toFixed(2));
+
+                        newReport.totalReceiveWeightAdjusted = Number((newReport.totalReceiveWeight + newReport.totalHaoWeight).toFixed(2));
 
                         newReport.totalReceiveWeightAdjustedIncludeBacDatVaTon = Number(newReport.totalReceiveWeightAdjusted + newReport.totalReceiveBacDatWeight + newReport.totalReceiveBacTonWeight).toFixed(2) as unknown as number;
 
@@ -255,6 +265,9 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                             await this.toastService.presentToastSuccess(`change Status of Order ${orderFromServer.orderName} to DONE successfully`);
                             await this.reportService.createReportByOrderId(this.userId, this.orderId, newReport);
                             await this.toastService.presentToastSuccess(`created Report for Order ${orderFromServer.orderName} successfully`);
+                            await this.router.navigate(['users', this.userId, 'reports', this.orderId]);
+                            window.dispatchEvent(new Event('resize'));
+                            await this.loadingService.dismissLoading();
                         });
                     }
                 } catch (e) {

@@ -39,6 +39,8 @@ export class ReportCreatePage implements OnInit, OnDestroy {
     isAuth$ = this.authService.getIsAuth$();
     userId: string;
     user$: Observable<User | any>;
+    orderId: string;
+    order$: Observable<Order>;
     reportId: string;
     report$: Observable<Report>;
     productsReportData = [];
@@ -101,6 +103,8 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         this.user$ = this.userService.getUser(this.userId);
         this.reportId = this.activatedRoute.snapshot.params.reportId;
         this.report$ = this.reportService.getReport(this.userId, this.reportId);
+        this.orderId = this.activatedRoute.snapshot.params.reportId;
+        this.order$ = this.orderService.getOrder(this.userId, this.reportId);
     }
 
     prepareTableData() {
@@ -163,12 +167,12 @@ export class ReportCreatePage implements OnInit, OnDestroy {
             if (this.report.giveWeights[i] === undefined || this.report.giveWeights[i] === null) {
                 row.giveWeight = 0;
             } else {
-                row.giveWeight = `${this.report.giveWeights[i]} (${this.datePipe.transform(new Date((this.report.giveWeightsDates[i] as unknown as Timestamp).seconds * 1000), 'dd/MM')})`;
+                row.giveWeight = `${this.report.giveWeights[i]} chỉ (${this.datePipe.transform(new Date((this.report.giveWeightsDates[i] as unknown as Timestamp).seconds * 1000), 'dd/MM')})`;
             }
             if (this.report.receiveWeights[i] === undefined || this.report.receiveWeights[i] === null) {
                 row.receiveWeight = 0;
             } else {
-                row.receiveWeight = `${this.report.receiveWeights[i]} (${this.datePipe.transform(new Date((this.report.receiveWeightsDates[i] as unknown as Timestamp).seconds * 1000), 'dd/MM')})`;
+                row.receiveWeight = `${this.report.receiveWeights[i]} chỉ (${this.datePipe.transform(new Date((this.report.receiveWeightsDates[i] as unknown as Timestamp).seconds * 1000), 'dd/MM')})`;
             }
             silverReportData.push(row);
         }
@@ -179,11 +183,18 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         totalGiveReceiveRow.receiveWeight = this.report.totalReceiveWeight + '';
         silverReportData.push(totalGiveReceiveRow);
 
+        const haoRow: any = {};
+        haoRow.firstColumn = 'Hao';
+        haoRow.giveWeight = 0;
+        // haoRow.receiveWeight = `${this.report.totalReceiveWeight} x 0.05 = ${Number(this.report.totalReceiveWeight * 0.05).toFixed(2)}`;
+        haoRow.receiveWeight = `${this.report.totalReceiveWeight} x 0.05 = ${this.report.totalHaoWeight}`;
+        silverReportData.push(haoRow);
+
         const receiveWeightAdjustedRow: any = {};
-        receiveWeightAdjustedRow.firstColumn = 'Nhận Cộng Hao';
+        receiveWeightAdjustedRow.firstColumn = 'Nhận cộng Hao';
         receiveWeightAdjustedRow.giveWeight = 0;
-        // receiveWeightAdjustedRow.receiveWeight = this.report.totalReceiveWeightAdjusted;
-        receiveWeightAdjustedRow.receiveWeight = `${this.report.totalReceiveWeight} chỉ x 1.05 = ${this.report.totalReceiveWeightAdjusted}`;
+        // receiveWeightAdjustedRow.receiveWeight = `${this.report.totalReceiveWeight} x 1.05 = ${this.report.totalReceiveWeightAdjusted}`;
+        receiveWeightAdjustedRow.receiveWeight = `${this.report.totalReceiveWeight} + ${this.report.totalHaoWeight} = ${this.report.totalReceiveWeightAdjusted}`;
         silverReportData.push(receiveWeightAdjustedRow);
 
         const bacDatRow: any = {};
@@ -199,6 +210,8 @@ export class ReportCreatePage implements OnInit, OnDestroy {
                 }
             }
             bacDatString += ' = ' + this.report.totalReceiveBacDatWeight;
+        } else {
+            bacDatString = '0 chỉ';
         }
         bacDatRow.receiveWeight = bacDatString;
         silverReportData.push(bacDatRow);
@@ -217,6 +230,8 @@ export class ReportCreatePage implements OnInit, OnDestroy {
                 }
             }
             bacTonString += ' = ' + this.report.totalReceiveBacTonWeight;
+        } else {
+            bacTonString = '0 chỉ';
         }
         bacTonRow.receiveWeight = bacTonString;
         silverReportData.push(bacTonRow);
@@ -229,7 +244,7 @@ export class ReportCreatePage implements OnInit, OnDestroy {
         silverReportData.push(receiveWeightAdjustedIncludeBacDatRow);
 
         const giveReceiveDifferenceRow: any = {};
-        giveReceiveDifferenceRow.firstColumn = 'Giao - Nhận';
+        giveReceiveDifferenceRow.firstColumn = 'Giao trừ Nhận';
         giveReceiveDifferenceRow.giveWeight = 0;
         giveReceiveDifferenceRow.receiveWeight = `${this.report.totalGiveWeight} - ${this.report.totalReceiveWeightAdjustedIncludeBacDatVaTon} = ${this.report.totalWeightDifference}`;
         silverReportData.push(giveReceiveDifferenceRow);

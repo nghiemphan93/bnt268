@@ -72,6 +72,11 @@
   margin: 1rem auto;
 }
 
+.report-container {
+  max-width: 900px;
+  margin: 1rem auto;
+}
+
 .ngx-datatable.material {
   .datatable-header {
     .datatable-header-cell {
@@ -111,7 +116,7 @@
   justify-content: space-evenly;
 }
 
-ion-badge{
+ion-badge {
   font-size: 1rem !important;
   font-weight: normal;
 }

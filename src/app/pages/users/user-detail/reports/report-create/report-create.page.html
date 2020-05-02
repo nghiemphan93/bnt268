@@ -3,7 +3,7 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>Tổng kết</ion-title>
+        <ion-title>Tổng kết {{ (this.order$ | async)?.orderName }}</ion-title>
     </ion-toolbar>
 </ion-header>
 
@@ -12,14 +12,12 @@
     <ion-grid>
         <ion-row>
             <ion-col
-                    sizeXl="8"
-                    offsetXl="2"
                     sizeLg="10"
                     offsetLg="1"
                     sizeMd="12"
                     offsetMd="0"
             >
-                <section>
+                <section class="report-container">
                     <ion-button
                             [routerLink]="['/users', userId, 'orders']"
                             color="dark"
@@ -123,98 +121,103 @@
                         </ion-col>
                     </ngx-datatable>
 
-                    <hr>
-
-                    <ion-grid fixed>
-                        <ion-row>
-                            <ion-col
-                                    sizeXl="12"
-                                    offsetXl="0"
-                                    sizeLg="12"
-                                    offsetLg="0"
-                                    sizeMd="12"
-                                    offsetMd="0"
-                                    sizeSm="12"
-                                    offsetSm="0"
-                                    sizeXs="12"
-                                    offsetXs="0"
-                            >
-                                <h3 class="ion-text-center">
-                                    <strong>
-                                        Bảng tổng kết bạc Giao/ Nhận
-                                    </strong>
-                                </h3>
+                    <hr class="ion-margin-top">
 
 
-                                <!--        Silver Report Table            -->
-                                <ngx-datatable
-                                        [rows]="silverReportData"
-                                        [rowHeight]="'auto'"
-                                        [headerHeight]="50"
-                                        [ngClass]="tableStyle"
-                                        [columnMode]="'force'"
-                                        [footerHeight]="50"
-                                        class="ion-text-wrap"
-                                        style="overflow: hidden"
-                                        #silverTable
+                    <h3 class="ion-text-center ion-margin-top">
+                        <strong>
+                            Bảng tổng kết bạc Giao/ Nhận
+                        </strong>
+                    </h3>
+
+
+                    <!--        Silver Report Table            -->
+                    <ngx-datatable
+                            [rows]="silverReportData"
+                            [rowHeight]="'auto'"
+                            [headerHeight]="50"
+                            [ngClass]="tableStyle"
+                            [columnMode]="'force'"
+                            [footerHeight]="50"
+                            class="ion-text-wrap"
+                            style="overflow: hidden"
+                            #silverTable
+                    >
+                        <!--    First Column   -->
+                        <ngx-datatable-column
+                                name="Chi tiết"
+                                prop="firstColumn"
+                        >
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <ion-badge
+                                        *ngIf="row.firstColumn !== ''"
+                                        color="primary"
                                 >
-                                    <!--    First Column   -->
-                                    <ngx-datatable-column
-                                            name="Chi tiết"
-                                            prop="firstColumn"
-                                    >
-                                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                                            <ion-badge
-                                                    *ngIf="row.firstColumn !== ''"
-                                                    color="primary"
-                                            >
-                                                {{ row?.firstColumn }}
-                                            </ion-badge>
-                                        </ng-template>
-                                    </ngx-datatable-column>
+                                    {{ row?.firstColumn }}
+                                </ion-badge>
+                            </ng-template>
+                        </ngx-datatable-column>
 
-                                    <!--    Give Weight   -->
-                                    <ngx-datatable-column
-                                            name="Giao"
-                                            prop="giveWeight"
+                        <!--    Give Weight   -->
+                        <ngx-datatable-column
+                                name="Giao"
+                                prop="giveWeight"
+                        >
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <ng-container
+                                        *ngIf="row?.giveWeight !== 0 && row?.giveWeight !== ''"
+                                >
+                                    <ion-badge
+                                            *ngIf="row?.giveWeight?.toString().includes('chỉ')"
+                                            color="tertiary"
                                     >
-                                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                                            <ion-badge
-                                                    *ngIf="row.giveWeight !== 0"
-                                                    color="tertiary"
-                                            >
-                                                {{ row?.giveWeight }} chỉ
-                                            </ion-badge>
-                                        </ng-template>
-                                    </ngx-datatable-column>
+                                        {{ row?.giveWeight }}
+                                    </ion-badge>
 
-                                    <!--    Receive Weight   -->
-                                    <ngx-datatable-column
-                                            name="Nhận"
-                                            prop="receiveWeight"
+                                    <ion-badge
+                                            *ngIf="!row?.giveWeight?.toString().includes('chỉ')"
+                                            color="tertiary"
                                     >
-                                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                                            <ion-badge
-                                                    *ngIf="row.receiveWeight !== 0"
-                                                    [color]="row.receiveWeight.includes('Tất cả') ? 'danger' : 'warning'"
-                                            >
-                                                {{ row?.receiveWeight }} chỉ
-                                            </ion-badge>
-                                        </ng-template>
-                                    </ngx-datatable-column>
+                                        {{ row?.giveWeight }} chỉ
+                                    </ion-badge>
+                                </ng-container>
+                            </ng-template>
+                        </ngx-datatable-column>
 
-                                    <ion-col
-                                            *ngIf="silverTable.rowCount === 0"
-                                            size="6"
-                                            offset="5"
+                        <!--    Receive Weight   -->
+                        <ngx-datatable-column
+                                name="Nhận"
+                                prop="receiveWeight"
+                        >
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <ng-container
+                                        *ngIf="row?.receiveWeight !== 0 && row?.receiveWeight !== ''"
+                                >
+                                    <ion-badge
+                                            *ngIf="row?.receiveWeight?.toString().includes('chỉ')"
+                                            [color]="row.receiveWeight.includes('Tất cả') ? 'danger' : 'warning'"
                                     >
-                                        <ion-spinner class="spinner-loading"></ion-spinner>
-                                    </ion-col>
-                                </ngx-datatable>
-                            </ion-col>
-                        </ion-row>
-                    </ion-grid>
+                                        {{ row?.receiveWeight }}
+                                    </ion-badge>
 
+                                    <ion-badge
+                                            *ngIf="!row?.receiveWeight?.toString().includes('chỉ')"
+                                            [color]="row?.receiveWeight?.includes('Tất cả') ? 'danger' : 'warning'"
+                                    >
+                                        {{ row?.receiveWeight }} chỉ
+                                    </ion-badge>
+                                </ng-container>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ion-col
+                                *ngIf="silverTable.rowCount === 0"
+                                size="6"
+                                offset="5"
+                        >
+                            <ion-spinner class="spinner-loading"></ion-spinner>
+                        </ion-col>
+                    </ngx-datatable>
                 </section>
             </ion-col>
         </ion-row>
