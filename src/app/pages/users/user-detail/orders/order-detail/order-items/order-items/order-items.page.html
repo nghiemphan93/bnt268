@@ -99,12 +99,18 @@
                     prop="orderItemComment"
             >
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    <ion-badge
+                    <!--                    <ion-badge-->
+                    <!--                            *ngIf="row?.orderItemComment !== ''"-->
+                    <!--                            color="medium"-->
+                    <!--                    >-->
+                    <!--                        {{ row?.orderItemComment }}-->
+                    <!--                    </ion-badge>-->
+
+                    <ion-text
                             *ngIf="row?.orderItemComment !== ''"
-                            color="medium"
                     >
                         {{ row?.orderItemComment }}
-                    </ion-badge>
+                    </ion-text>
                 </ng-template>
             </ngx-datatable-column>
 
@@ -309,13 +315,20 @@
 
                                 <ion-item>
                                     <ion-label>Comment:</ion-label>
-                                    <ion-badge
+                                    <!--                                    <ion-badge-->
+                                    <!--                                            *ngIf="orderItem?.orderItemComment !== ''"-->
+                                    <!--                                            slot="end"-->
+                                    <!--                                            color="medium"-->
+                                    <!--                                    >-->
+                                    <!--                                        {{ orderItem?.orderItemComment }}-->
+                                    <!--                                    </ion-badge>-->
+
+                                    <ion-text
                                             *ngIf="orderItem?.orderItemComment !== ''"
                                             slot="end"
-                                            color="medium"
                                     >
                                         {{ orderItem?.orderItemComment }}
-                                    </ion-badge>
+                                    </ion-text>
                                 </ion-item>
 
                                 <ng-container

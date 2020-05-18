@@ -52,6 +52,8 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
     @ViewChildren('productSelectElements') productsIonSelectQuery: QueryList<IonSelect>;
     productsIonSelects: IonSelect[];
     today = new Date();
+    isCorelProduct = false;
+    isSilverProduct = false;
 
     constructor(private orderService: OrderService,
                 private orderItemService: OrderItemService,
@@ -303,37 +305,51 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
         return o1 && o2 ? o1.id === o2.id : o1 === o2;
     }
 
-    bacDatHandler(productIndex: number) {
-        // console.log(this.productsIonSelects[productIndex]);
+    isSilverHandler(productIndex: number) {
         const selectedProduct: Product = this.validationForm.value.orderItemProducts[productIndex];
         const selectedQuantity: number = this.validationForm.value.orderItemQuantities[productIndex];
-        // if (selectedProduct.productName.toLowerCase() === 'bạc dát' || selectedProduct.productName.toLowerCase() === 'bạc tồn' || selectedProduct.productName.toLowerCase() === 'bạc phôi' || selectedProduct.productName.toLowerCase() === 'bạc') {
+
+        // if (selectedProduct.productName.toLowerCase().includes('bạc')) {
+        //     this.isSilverProduct = true;
         //     this.orderItemQuantities.at(productIndex).patchValue(0);
-        // } else {
+        // } else if (selectedProduct.productName.toLowerCase().includes('corel')) {
+        //     this.isSilverProduct = false;
         //     this.orderItemQuantities.at(productIndex).patchValue(null);
+        //     this.isCorelProduct = true;
+        //     this.validationForm.patchValue({orderItemWeight: 0});
+        // } else {
+        //     this.isSilverProduct = false;
+        //     this.orderItemQuantities.at(productIndex).patchValue(null);
+        //     this.isCorelProduct = false;
+        //     this.validationForm.patchValue({orderItemWeight: null});
         // }
 
         if (selectedProduct.productName.toLowerCase().includes('bạc')) {
+            this.isSilverProduct = true;
             this.orderItemQuantities.at(productIndex).patchValue(0);
         } else {
+            this.isSilverProduct = false;
             this.orderItemQuantities.at(productIndex).patchValue(null);
+        }
+
+        if (selectedProduct.productName.toLowerCase().includes('corel')) {
+            this.isCorelProduct = true;
+            this.validationForm.patchValue({orderItemWeight: 0});
+        } else {
+            this.isCorelProduct = false;
+            this.validationForm.patchValue({orderItemWeight: null});
         }
     }
 
-    isSilverDatOrBacTon(productIndex: number) {
-        const selectedProduct: Product = this.validationForm.value.orderItemProducts[productIndex];
-        const selectedQuantity: number = this.validationForm.value.orderItemQuantities[productIndex];
-        if (selectedProduct) {
-            // if (selectedProduct.productName.toLowerCase() === 'bạc dát' || selectedProduct.productName.toLowerCase() === 'bạc tồn') {
-            //     return true;
-            // } else {
-            //     return false;
-            // }
-            if (selectedProduct.productName.toLowerCase().includes('bạc')) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
+    // isSilver(productIndex: number) {
+    //     const selectedProduct: Product = this.validationForm.value.orderItemProducts[productIndex];
+    //     const selectedQuantity: number = this.validationForm.value.orderItemQuantities[productIndex];
+    //     if (selectedProduct) {
+    //         if (selectedProduct.productName.toLowerCase().includes('bạc')) {
+    //             return true;
+    //         } else {
+    //             return false;
+    //         }
+    //     }
+    // }
 }

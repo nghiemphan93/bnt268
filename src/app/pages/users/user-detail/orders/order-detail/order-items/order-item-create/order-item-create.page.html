@@ -204,7 +204,7 @@
                                         [compareWith]="compareWithFn"
                                         [formControl]="orderItemProducts?.controls[i]"
                                         slot="end"
-                                        (ionChange)="bacDatHandler(i)"
+                                        (ionChange)="isSilverHandler(i)"
                                         #productSelectElements
                                 >
                                     <ion-select-option
@@ -232,7 +232,7 @@
                                         type="number"
                                         slot="end"
                                         [formControl]="orderItemQuantities?.controls[i]"
-                                        [readonly]="isSilverDatOrBacTon(i)"
+                                        [readonly]="isSilverProduct"
                                 ></ion-input>
 
                                 <ion-label *ngIf="isDetailed">
@@ -256,6 +256,7 @@
                                     formControlName="orderItemWeight"
                                     slot="end"
                                     *ngIf="!isDetailed"
+                                    [readonly]="isCorelProduct"
                             ></ion-input>
 
                             <ion-label *ngIf="isDetailed">
