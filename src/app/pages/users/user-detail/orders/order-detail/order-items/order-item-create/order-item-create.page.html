@@ -133,7 +133,8 @@
                                     *ngIf="!isDetailed"
                             ></ion-input>
 
-                            <ion-label *ngIf="isDetailed">{{ orderItem?.orderItemComment }}</ion-label>
+                            <!--                            <ion-label *ngIf="isDetailed">{{ orderItem?.orderItemComment }}</ion-label>-->
+                            <ion-text *ngIf="isDetailed">{{ orderItem?.orderItemComment }}</ion-text>
                         </ion-item>
                     </ion-item-group>
 
