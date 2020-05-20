@@ -234,17 +234,29 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                             newReport.totalPricePerProduct.push(product.productPrice * productQuantityMapper.get(product.id));
                         });
 
-                        newReport.totalPrice = newReport.totalPricePerProduct.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
-                            return previousValue + currentValue;
-                        });
+                        if (newReport.totalPricePerProduct.length > 0) {
+                            newReport.totalPrice = newReport.totalPricePerProduct.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                                return previousValue + currentValue;
+                            });
+                        } else {
+                            newReport.totalPrice = 0;
+                        }
 
-                        newReport.totalGiveWeight = Number(newReport.giveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
-                            return previousValue + currentValue;
-                        })).toFixed(2) as unknown as number;
+                        if (newReport.giveWeights.length > 0) {
+                            newReport.totalGiveWeight = Number(newReport.giveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                                return previousValue + currentValue;
+                            })).toFixed(2) as unknown as number;
+                        } else {
+                            newReport.totalGiveWeight = 0;
+                        }
 
-                        newReport.totalReceiveWeight = Number(newReport.receiveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
-                            return previousValue + currentValue;
-                        }).toFixed(2));
+                        if (newReport.receiveWeights.length > 0) {
+                            newReport.totalReceiveWeight = Number(newReport.receiveWeights.reduce((previousValue: number, currentValue: number, currentIndex: number, array: number[]) => {
+                                return previousValue + currentValue;
+                            }).toFixed(2));
+                        } else {
+                            newReport.totalReceiveWeight = 0;
+                        }
 
                         newReport.totalHaoWeight = Number(Number(newReport.totalReceiveWeight * 0.05).toFixed(2));
 

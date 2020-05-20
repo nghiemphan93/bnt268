@@ -123,17 +123,16 @@
 
                     <hr class="ion-margin-top">
 
-
                     <h3 class="ion-text-center ion-margin-top">
                         <strong>
                             Bảng tổng kết bạc Giao/ Nhận
                         </strong>
                     </h3>
 
-
+                    <!--                    [rows]="(report$ | async)?.totalGiveWeight  === 0 && (report$ | async)?.totalReceiveWeight === 0 ? null : silverReportData"-->
                     <!--        Silver Report Table            -->
                     <ngx-datatable
-                            [rows]="silverReportData"
+                            [rows]="report?.totalGiveWeight  === 0 && report?.totalReceiveWeight === 0 ? null : silverReportData"
                             [rowHeight]="'auto'"
                             [headerHeight]="50"
                             [ngClass]="tableStyle"
@@ -244,10 +243,16 @@
 
     <!--      Cards as Products      -->
     <ion-grid fixed>
+        <ion-button
+                [routerLink]="['/users', userId, 'orders']"
+                color="dark"
+        >
+            <ion-icon name="arrow-back-outline"></ion-icon>
+            Quay về các tháng
+        </ion-button>
+
         <ion-row
         >
-
-
             <h3 class="ion-text-center">
                 <strong>
                     Tổng kết sản phẩm
@@ -371,100 +376,104 @@
             </p>
             <hr>
 
-            <h3 class="ion-text-center">
-                <strong>
-                    Tổng kết bạc giao / nhận
-                </strong>
-            </h3>
-            <ion-col
-                    sizeMd="4"
-                    sizeSm="6"
-                    sizeXs="12"
-                    *ngFor="let silverReportRow of silverReportData; index as i"
+            <!--            *ngIf="(report$ | async)?.totalGiveWeight  !== 0 && (report$ | async)?.totalReceiveWeight !== 0"-->
+            <ng-container
+                    *ngIf="report?.totalGiveWeight  !== 0 && report?.totalReceiveWeight !== 0"
             >
-                <ion-card
-                        class="ion-no-margin ion-no-padding"
+                <h3 class="ion-text-center">
+                    <strong>
+                        Tổng kết bạc giao / nhận
+                    </strong>
+                </h3>
+                <ion-col
+                        sizeMd="4"
+                        sizeSm="6"
+                        sizeXs="12"
+                        *ngFor="let silverReportRow of silverReportData; index as i"
                 >
-                    <section>
-                        <!--                        <ion-card-header class="ion-no-padding ion-no-margin">-->
-                        <!--                            <ion-card-title class="ion-text-center">-->
-                        <!--                                <ion-button-->
-                        <!--                                        size="small"-->
-                        <!--                                        color="dark"-->
-                        <!--                                        [routerLink]="['/products', silverReportRow?.id]"-->
-                        <!--                                        class="ion-text-wrap"-->
-                        <!--                                >-->
-                        <!--                                    &lt;!&ndash;                                    <ion-icon name="pricetag-outline" class="ion-margin-end"></ion-icon>&ndash;&gt;-->
-                        <!--                                    <span>Tổng kết bạc giao / nhận</span>-->
-                        <!--                                </ion-button>-->
-                        <!--                            </ion-card-title>-->
-                        <!--                        </ion-card-header>-->
+                    <ion-card
+                            class="ion-no-margin ion-no-padding"
+                    >
+                        <section>
+                            <!--                        <ion-card-header class="ion-no-padding ion-no-margin">-->
+                            <!--                            <ion-card-title class="ion-text-center">-->
+                            <!--                                <ion-button-->
+                            <!--                                        size="small"-->
+                            <!--                                        color="dark"-->
+                            <!--                                        [routerLink]="['/products', silverReportRow?.id]"-->
+                            <!--                                        class="ion-text-wrap"-->
+                            <!--                                >-->
+                            <!--                                    &lt;!&ndash;                                    <ion-icon name="pricetag-outline" class="ion-margin-end"></ion-icon>&ndash;&gt;-->
+                            <!--                                    <span>Tổng kết bạc giao / nhận</span>-->
+                            <!--                                </ion-button>-->
+                            <!--                            </ion-card-title>-->
+                            <!--                        </ion-card-header>-->
 
-                        <ion-card-content>
-                            <ion-item-group>
-                                <!--    First Column   -->
-                                <ion-item *ngIf="silverReportRow.firstColumn !== ''">
-                                    <!--                                    <ion-label>Chi tiết:</ion-label>-->
-                                    <ion-badge
-                                            *ngIf="silverReportRow.firstColumn !== ''"
-                                            slot="end"
-                                            color="primary"
-                                    >
-                                        {{ silverReportRow?.firstColumn }}
-                                    </ion-badge>
-                                </ion-item>
-
-                                <!--    Give Weight   -->
-                                <ion-item *ngIf="silverReportRow.giveWeight !== 0">
-                                    <ion-label>Giao:</ion-label>
-                                    <!--                                    <ion-badge-->
-                                    <!--                                            *ngIf="silverReportRow.giveWeight !== 0"-->
-                                    <!--                                            slot="end"-->
-                                    <!--                                            color="tertiary"-->
-                                    <!--                                    >-->
-                                    <!--                                        {{ silverReportRow?.giveWeight}} chỉ-->
-                                    <!--                                    </ion-badge>-->
-
-                                    <ion-text
-                                            *ngIf="silverReportRow.giveWeight !== 0"
-                                            slot="end"
-                                            color=""
-                                    >
-                                        {{ silverReportRow?.giveWeight}} chỉ
-                                    </ion-text>
-                                </ion-item>
-
-                                <!--    Receive Weight   -->
-                                <ion-item>
-                                    <ng-container *ngIf="i === silverReportData.length - 1">
-                                        <ion-label><strong></strong></ion-label>
+                            <ion-card-content>
+                                <ion-item-group>
+                                    <!--    First Column   -->
+                                    <ion-item *ngIf="silverReportRow.firstColumn !== ''">
+                                        <!--                                    <ion-label>Chi tiết:</ion-label>-->
                                         <ion-badge
-                                                *ngIf="silverReportRow?.receiveWeight !== 0"
+                                                *ngIf="silverReportRow.firstColumn !== ''"
                                                 slot="end"
-                                                color="danger"
+                                                color="primary"
                                         >
-                                            {{ silverReportRow?.receiveWeight }} chỉ
+                                            {{ silverReportRow?.firstColumn }}
                                         </ion-badge>
-                                    </ng-container>
+                                    </ion-item>
 
-                                    <ng-container *ngIf="i !== silverReportData.length - 1">
-                                        <ion-label>Nhận:</ion-label>
+                                    <!--    Give Weight   -->
+                                    <ion-item *ngIf="silverReportRow.giveWeight !== 0">
+                                        <ion-label>Giao:</ion-label>
+                                        <!--                                    <ion-badge-->
+                                        <!--                                            *ngIf="silverReportRow.giveWeight !== 0"-->
+                                        <!--                                            slot="end"-->
+                                        <!--                                            color="tertiary"-->
+                                        <!--                                    >-->
+                                        <!--                                        {{ silverReportRow?.giveWeight}} chỉ-->
+                                        <!--                                    </ion-badge>-->
+
                                         <ion-text
-                                                *ngIf="silverReportRow?.receiveWeight !== 0"
+                                                *ngIf="silverReportRow.giveWeight !== 0"
                                                 slot="end"
                                                 color=""
                                         >
-                                            {{ silverReportRow?.receiveWeight }}
-                                            chỉ
+                                            {{ silverReportRow?.giveWeight}} chỉ
                                         </ion-text>
-                                    </ng-container>
-                                </ion-item>
-                            </ion-item-group>
-                        </ion-card-content>
-                    </section>
-                </ion-card>
-            </ion-col>
+                                    </ion-item>
 
+                                    <!--    Receive Weight   -->
+                                    <ion-item>
+                                        <ng-container *ngIf="i === silverReportData.length - 1">
+                                            <ion-label><strong></strong></ion-label>
+                                            <ion-badge
+                                                    *ngIf="silverReportRow?.receiveWeight !== 0"
+                                                    slot="end"
+                                                    color="danger"
+                                            >
+                                                {{ silverReportRow?.receiveWeight }} chỉ
+                                            </ion-badge>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="i !== silverReportData.length - 1">
+                                            <ion-label>Nhận:</ion-label>
+                                            <ion-text
+                                                    *ngIf="silverReportRow?.receiveWeight !== 0"
+                                                    slot="end"
+                                                    color=""
+                                            >
+                                                {{ silverReportRow?.receiveWeight }}
+                                                chỉ
+                                            </ion-text>
+                                        </ng-container>
+                                    </ion-item>
+                                </ion-item-group>
+                            </ion-card-content>
+                        </section>
+                    </ion-card>
+                </ion-col>
+            </ng-container>
         </ion-row>
     </ion-grid>
 
