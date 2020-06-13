@@ -22,7 +22,7 @@ export class ProductsPage implements OnInit, OnDestroy {
     productsDesktop$: Observable<Product[]>;
     productsMobile$: Observable<Product[]>;
     products: Product[] = [];
-    tableStyle = 'material';
+    tableStyle = 'material striped';
     skeletons = [1, 2];
     @ViewChild('table', {static: false}) table: DatatableComponent;
     currentUser$ = this.authService.getCurrentUser$();

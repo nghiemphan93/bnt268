@@ -25,7 +25,7 @@ export class OrdersPage implements OnInit, OnDestroy {
     ordersDesktop$: Observable<Order[]>;
     ordersMobile$: Observable<Order[]>;
     orders: Order[] = [];
-    tableStyle = 'material';
+    tableStyle = 'material striped';
     userId: string;
     skeletons = [1, 2];
     @ViewChild('table', {static: false}) table: DatatableComponent;

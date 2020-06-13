@@ -21,7 +21,7 @@ import {PlatformService} from '../../../services/platform.service';
 export class UsersPage implements OnInit, OnDestroy {
     subscription = new Subscription();
     users$: Observable<User[] | any[]>;
-    tableStyle = 'material';
+    tableStyle = 'material striped';
     skeletons = [1, 2];
     currentUser$: Observable<User | any>;
     @ViewChild('table', {static: false}) table: DatatableComponent;

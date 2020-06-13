@@ -35,7 +35,7 @@ export class OrderItemsPage implements OnInit, OnDestroy {
     orderItems$: Observable<OrderItem[]>;
     orderItemsMobile$: Observable<OrderItem[]>;
     orderItems: OrderItem[] = [];
-    tableStyle = 'material';
+    tableStyle = 'material striped';
     userId: string;
     orderId: string;
     skeletons = [1, 2];
@@ -82,6 +82,7 @@ export class OrderItemsPage implements OnInit, OnDestroy {
             this.orderItems$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
         } else {
             this.orderItems$ = this.orderItemCacheService.getOrderItemsCache$(this.userId, this.orderId);
+            this.configOrderItemsTableSize();
         }
     }
 
@@ -288,5 +289,42 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                 }
             }));
         }));
+    }
+
+    configOrderItemsTableSize() {
+        this.currentUser$.subscribe(currentUser => {
+            if (currentUser) {
+                if (currentUser.customClaims.WORKER === true) {
+                    const totalTableWidth = this.table._innerWidth;
+                    const columnPortions = [1, 1.5, 0.8, 1.7, 0.7, 0.8];
+                    const totalPortions = columnPortions.reduce((previousValue, currentValue) => previousValue + currentValue);
+
+                    for (let i = 0; i < this.table._internalColumns.length; i++) {
+                        this.table._internalColumns[i].width = (totalTableWidth / totalPortions) * columnPortions[i];
+                    }
+                }
+
+                if (currentUser.customClaims.ADMIN === true) {
+                    const totalTableWidth = this.table._innerWidth;
+                    const columnPortions = [1, 1.5, 0.8, 1.7, 0.7, 1, 0.8];
+                    const totalPortions = columnPortions.reduce((previousValue, currentValue) => previousValue + currentValue);
+
+                    for (let i = 0; i < this.table._internalColumns.length; i++) {
+                        this.table._internalColumns[i].width = (totalTableWidth / totalPortions) * columnPortions[i];
+                    }
+                }
+
+                if (currentUser.customClaims.DEV === true) {
+                    const totalTableWidth = this.table._innerWidth;
+                    const columnPortions = [1, 1.5, 0.8, 1.7, 0.7, 0.8, 0.8, 0.7];
+                    const totalPortions = columnPortions.reduce((previousValue, currentValue) => previousValue + currentValue);
+
+                    for (let i = 0; i < this.table._internalColumns.length; i++) {
+                        this.table._internalColumns[i].width = (totalTableWidth / totalPortions) * columnPortions[i];
+                    }
+                }
+            }
+        });
+
     }
 }

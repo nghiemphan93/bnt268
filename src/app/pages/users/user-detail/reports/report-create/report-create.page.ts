@@ -46,7 +46,7 @@ export class ReportCreatePage implements OnInit, OnDestroy {
     productsReportData = [];
     silverReportData = [];
     report: Report;
-    tableStyle = 'material';
+    tableStyle = 'material striped';
     @ViewChild('productsTable', {static: false}) productsTable: DatatableComponent;
     @ViewChild('silverTable', {static: false}) silverTable: DatatableComponent;
     skeletons = [1, 2];
