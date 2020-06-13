@@ -105,13 +105,21 @@
                     <ion-item-group>
                         <ion-item>
                             <ion-label>Ngày Tạo</ion-label>
-                            <ion-datetime
+                            <!--                            <ion-datetime-->
 
+                            <!--                                    formControlName="createdAt"-->
+                            <!--                                    displayFormat="DD/MM/YY"-->
+                            <!--                                    [readonly]="isDetailed"-->
+                            <!--                            >-->
+                            <!--                            </ion-datetime>-->
+
+                            <ion-input
+                                    type="date"
+                                    slot="end"
                                     formControlName="createdAt"
-                                    displayFormat="DD/MM/YY"
                                     [readonly]="isDetailed"
                             >
-                            </ion-datetime>
+                            </ion-input>
 
                             <!--                            <ion-label-->
                             <!--                                    *ngIf="isDetailed"-->

@@ -1,4 +1,13 @@
-import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    HostListener,
+    OnDestroy,
+    OnInit,
+    QueryList,
+    ViewChildren
+} from '@angular/core';
 import {OrderService} from '../../../../../../../services/order.service';
 import {OrderItemService} from '../../../../../../../services/order-item.service';
 import {ProductService} from '../../../../../../../services/product.service';
@@ -13,12 +22,12 @@ import {Product} from '../../../../../../../models/product';
 import {AuthService} from '../../../../../../../services/auth.service';
 import {User} from 'firebase';
 import {UserService} from '../../../../../../../services/user.service';
-import {IonButton, IonSelect} from '@ionic/angular';
+import {IonButton, IonInput, IonSelect} from '@ionic/angular';
 import {Kind} from '../../../../../../../models/kind.enum';
 import {KindService} from '../../../../../../../services/kind.service';
 import {element} from 'protractor';
 import {log} from 'util';
-import {DatePipe} from '@angular/common';
+import {DatePipe, formatDate} from '@angular/common';
 import Timestamp = firebase.firestore.Timestamp;
 import * as firebase from 'firebase';
 import {ProductCacheService} from '../../../../../../../services/product-cache.service';
@@ -161,7 +170,8 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
             orderItemQuantities: new FormArray([]),
             orderItemWeight: new FormControl('', Validators.required),
             order: new FormControl(this.order, Validators.required),
-            createdAt: new FormControl(new Date().toISOString(), Validators.required)
+            // createdAt: new FormControl(new Date().toISOString(), Validators.required)
+            createdAt: new FormControl(formatDate(new Date(), 'yyyy-MM-dd', 'en'), Validators.required)
         });
 
         this.orderItemProducts = this.validationForm.get('orderItemProducts') as FormArray;
@@ -194,7 +204,8 @@ export class OrderItemCreatePage implements OnInit, OnDestroy, AfterViewInit {
             orderItemQuantities: new FormArray([]),
             orderItemWeight: new FormControl(this.orderItem.orderItemWeight, Validators.required),
             order: new FormControl(this.orderItem.order, Validators.required),
-            createdAt: new FormControl(new Date((this.orderItem.createdAt as unknown as Timestamp).seconds * 1000).toISOString(), Validators.required)
+            // createdAt: new FormControl(new Date((this.orderItem.createdAt as unknown as Timestamp).seconds * 1000).toISOString(), Validators.required)
+            createdAt: new FormControl(formatDate(new Date((this.orderItem.createdAt as unknown as Timestamp).seconds * 1000).toISOString(), 'yyyy-MM-dd', 'en'), Validators.required)
         });
 
         this.orderItemProducts = this.validationForm.get('orderItemProducts') as FormArray;
