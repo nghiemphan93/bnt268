@@ -27,8 +27,8 @@
                 <ion-button
                         [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', 'create']"
                         *ngIf="((isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER)"
-                        [disabled]="(order$ | async)?.orderStatus === DONE"
                 >
+                    <!--                    [disabled]="(order$ | async)?.orderStatus === DONE"-->
                     <ion-icon name="add-circle-outline"></ion-icon>
                     Đơn hàng mới
                 </ion-button>
@@ -37,11 +37,14 @@
                         *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER"
                         color="tertiary"
                         [disabled]="
-                            (order$ | async)?.orderStatus === DONE
-                            || (orderItems$ | async)?.length === 0
+                            (orderItems$ | async)?.length === 0
                             "
                         (click)="prepareReportHandler()"
                 >
+                    <!--                    [disabled]="-->
+                    <!--                    (order$ | async)?.orderStatus === DONE-->
+                    <!--                    || (orderItems$ | async)?.length === 0-->
+                    <!--                    "-->
                     <ion-icon name="receipt-outline" class="ion-margin-end"></ion-icon>
                     Tổng kết
                 </ion-button>
@@ -237,8 +240,8 @@
                 <ion-button
                         [routerLink]="['/users', userId, 'orders', orderId, 'orderItems', 'create']"
                         *ngIf="((isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER)"
-                        [disabled]="(order$ | async)?.orderStatus === DONE"
                 >
+                    <!--                    [disabled]="(order$ | async)?.orderStatus === DONE"-->
                     <ion-icon name="add-circle-outline"></ion-icon>
                     Đơn hàng mới
                 </ion-button>
@@ -247,11 +250,14 @@
                         *ngIf="(isAuth$ | async) && !(currentUser$ | async)?.customClaims?.WORKER"
                         color="tertiary"
                         [disabled]="
-                            (order$ | async)?.orderStatus === DONE
-                            || (orderItems$ | async)?.length === 0
+                            (orderItems$ | async)?.length === 0
                             "
                         (click)="prepareReportHandler()"
                 >
+                    <!--                    [disabled]="-->
+                    <!--                    (order$ | async)?.orderStatus === DONE-->
+                    <!--                    || (orderItems$ | async)?.length === 0-->
+                    <!--                    "-->
                     <ion-icon name="receipt-outline" class="ion-margin-end"></ion-icon>
                     Tổng kết
                 </ion-button>
