@@ -14,6 +14,7 @@
                                 *ngIf="currentUser$ | async"
                         >
                             <ion-item
+                                    *ngIf="!(currentUser$ | async)?.customClaims?.WORKER"
                                     (click)="setSelected(0)"
                                     routerDirection="root"
                                     [routerLink]="['/products']"
