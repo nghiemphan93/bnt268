@@ -186,7 +186,7 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                                         const productId = orderItem.orderItemProducts[i].id;
                                         const productQuantity = orderItem.orderItemQuantities[i];
                                         try {
-                                            if (product.productName.toLowerCase() === 'bạc dát') {
+                                            if (product.productName.toLowerCase().includes('bạc dát')) {
                                                 newReport.totalReceiveBacDatWeight += orderItem.orderItemWeight;
                                                 const bacDatWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
                                                 const bacDatWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
@@ -197,7 +197,7 @@ export class OrderItemsPage implements OnInit, OnDestroy {
                                                 newReport.receiveWeightsDates.splice(newReport.receiveWeights.length - 1, 1);
                                             }
 
-                                            if (product.productName.toLowerCase() === 'bạc tồn') {
+                                            if (product.productName.toLowerCase().includes('bạc tồn')) {
                                                 newReport.totalReceiveBacTonWeight += orderItem.orderItemWeight;
                                                 const bacTonWeight = newReport.receiveWeights[newReport.receiveWeights.length - 1];
                                                 const bacTonWeightDate = newReport.receiveWeightsDates[newReport.receiveWeightsDates.length - 1];
