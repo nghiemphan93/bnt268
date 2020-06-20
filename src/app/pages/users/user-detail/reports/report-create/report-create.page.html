@@ -195,6 +195,7 @@
                                     <ion-badge
                                             *ngIf="row?.receiveWeight?.toString().includes('chỉ')"
                                             [color]="row.receiveWeight.includes('Tất cả') ? 'danger' : 'warning'"
+                                            class="ion-text-wrap"
                                     >
                                         {{ row?.receiveWeight }}
                                     </ion-badge>
@@ -202,6 +203,7 @@
                                     <ion-badge
                                             *ngIf="!row?.receiveWeight?.toString().includes('chỉ')"
                                             [color]="row?.receiveWeight?.includes('Tất cả') ? 'danger' : 'warning'"
+                                            class="ion-text-wrap"
                                     >
                                         {{ row?.receiveWeight }} chỉ
                                     </ion-badge>
