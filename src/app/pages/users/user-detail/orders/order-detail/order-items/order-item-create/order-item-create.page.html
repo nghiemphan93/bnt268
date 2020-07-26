@@ -256,6 +256,16 @@
                         </ion-card>
                     </section>
 
+                    <ion-button
+                            *ngIf="!isDetailed"
+                            (click)="addProductAndQuantityFormControl()"
+                            size="small"
+                            class="ion-margin-bottom"
+                    >
+                        <ion-icon name="add-circle-outline"></ion-icon>
+                        Thêm sản phẩm và số lượng
+                    </ion-button>
+
                     <!--    Order Item Weight   -->
                     <ion-item-group>
                         <ion-item>
